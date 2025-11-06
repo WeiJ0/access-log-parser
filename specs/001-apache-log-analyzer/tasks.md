@@ -22,9 +22,9 @@
 - [ ] T004 初始化 Wails 專案：執行 `wails init -n apache-log-analyzer -t vanilla-ts`
 - [ ] T005 [P] 配置 wails.json 設定檔（應用程式名稱、版本、建置選項）
 - [ ] T006 [P] 安裝 Go 後端依賴套件（excelize v2, zerolog, testify）
-- [ ] T007 [P] 初始化前端專案：在 frontend/ 目錄執行 `npm install`
-- [ ] T008 [P] 安裝前端依賴套件（React 18, TypeScript 5, ag-Grid Community, Material-UI）
-- [ ] T009 [P] 配置 TypeScript tsconfig.json（strict mode, 路徑別名）
+- [X] T007 [P] 初始化前端專案：在 frontend/ 目錄執行 `npm install`
+- [X] T008 [P] 安裝前端依賴套件（React 18, TypeScript 5, ag-Grid Community, Material-UI）
+- [X] T009 [P] 配置 TypeScript tsconfig.json（strict mode, 路徑別名）
 - [ ] T010 [P] 配置 Go 工具鏈（gofmt, golint, go vet）在 scripts/ 或 Makefile
 - [X] T011 建立專案目錄結構：cmd/, internal/, pkg/, frontend/src/, configs/, scripts/, docs/
 
@@ -66,9 +66,9 @@
 
 ### 前端基礎架構
 
-- [ ] T028 [P] 建立 TypeScript 型別定義在 frontend/src/types/log.ts（對應 Go 結構）
-- [ ] T029 [P] 建立 API 服務封裝層在 frontend/src/services/logService.ts（封裝 Wails 呼叫）
-- [ ] T030 [P] 配置 Material-UI 主題在 frontend/src/theme.ts（繁體中文，色彩配置）
+- [X] T028 [P] 建立 TypeScript 型別定義在 frontend/src/types/log.ts（對應 Go 結構）
+- [X] T029 [P] 建立 API 服務封裝層在 frontend/src/services/logService.ts（封裝 Wails 呼叫）
+- [X] T030 [P] 配置 Material-UI 主題在 frontend/src/theme.ts（繁體中文，色彩配置）
 - [ ] T031 建立主應用程式結構在 frontend/src/App.tsx（路由、全域狀態）
 
 **Checkpoint**: ✅ 基礎設施就緒 - 用戶故事實作現在可以並行開始
