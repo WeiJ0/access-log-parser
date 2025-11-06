@@ -1,50 +1,79 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+Version change: 1.0.0 (初始版本)
+Added sections: 
+  - 五個核心原則（模組化設計、高效能優化、測試驅動開發、Go 語言最佳實踐、可觀測性）
+  - 效能標準
+  - 開發工作流程
+Templates requiring updates: 
+  ✅ Updated plan-template.md compatibility
+  ✅ Updated spec-template.md alignment
+  ✅ Updated tasks-template.md consistency
+Follow-up TODOs: 無
+-->
 
-## Core Principles
+# Access Log Parser Constitution
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+## 核心原則
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### I. 模組化設計原則
+每個功能必須以獨立模組形式實作；模組必須具備自包含性、可獨立測試、完整文檔；每個模組必須有明確的用途 - 禁止僅為組織目的而建立的模組。模組介面必須簡潔且符合 Go 語言慣例。
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**理由**: 模組化設計確保程式碼的可維護性和重用性，特別適合日誌解析這種需要處理多種格式的應用場景。
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. 高效能優化原則 (不可協商)
+所有程式碼必須以效能為優先考量；必須使用 Go 語言的並發特性（goroutines, channels）；記憶體使用必須最佳化，避免不必要的記憶體分配；必須實作基準測試來驗證效能；禁止使用低效的演算法或資料結構。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+**理由**: 日誌解析通常需要處理大量資料，效能是關鍵需求。Go 語言的並發特性是其核心優勢，必須充分利用。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### III. 測試驅動開發 (不可協商)
+TDD 必須嚴格執行：測試程式碼撰寫 → 使用者確認 → 測試失敗 → 開始實作；Red-Green-Refactor 循環必須嚴格遵守；所有公開函式必須有對應的測試；基準測試必須涵蓋效能關鍵路徑。
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+**理由**: 測試驅動開發確保程式碼品質，對於日誌解析這種需要處理各種邊界情況的應用特別重要。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### IV. Go 語言最佳實踐
+必須遵循 Go 語言官方編程規範；使用 gofmt 和 golint 進行程式碼格式化；錯誤處理必須明確且具描述性；介面設計必須小而專精；必須使用適當的 Go 語言慣例（如 receiver 命名、package 命名等）。
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**理由**: 遵循 Go 語言最佳實踐確保程式碼的可讀性和維護性，符合 Go 社群標準。
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+### V. 可觀測性與日誌處理
+必須實作結構化日誌記錄；必須提供詳細的效能指標；錯誤必須包含足夠的上下文資訊；必須支援日誌等級控制；所有關鍵操作必須可追蹤和監控。
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**理由**: 作為日誌解析工具，本身的可觀測性至關重要，有助於除錯和效能調優。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+## 效能標準
+
+所有功能必須符合以下效能要求：
+- 單檔案日誌解析速度：至少 100MB/秒
+- 記憶體使用：解析過程中記憶體使用不得超過檔案大小的 2 倍
+- 並發處理：必須支援多個 goroutines 同時處理不同檔案
+- 響應時間：CLI 命令啟動時間不得超過 100ms
+- 吞吐量：對於標準格式日誌，必須達到至少 10,000 行/秒的解析速度
+
+所有效能要求必須透過基準測試驗證並持續監控。
+
+## 開發工作流程
+
+### 程式碼審查要求
+- 所有 Pull Request 必須經過至少一人審查
+- 審查者必須驗證憲章合規性
+- 必須檢查效能測試結果
+- 複雜度增加必須有充分理由
+
+### 品質閘道
+- 所有測試必須通過（單元測試、整合測試、基準測試）
+- 程式碼覆蓋率必須達到 80% 以上
+- golint 和 go vet 檢查必須無警告
+- 必須包含適當的文檔註解
+
+### 版本控制
+採用語意化版本控制 (MAJOR.MINOR.PATCH)：
+- MAJOR：向下不相容的 API 變更
+- MINOR：向下相容的功能新增
+- PATCH：向下相容的錯誤修復
+
+## 治理規則
+
+本憲章優先於所有其他實踐規範；憲章修正必須經過文檔記錄、審核批准、遷移計畫；所有 Pull Request 和程式碼審查必須驗證憲章合規性；複雜度增加必須有合理解釋；開發過程中請參考相關模板和指導文件。
+
+**Version**: 1.0.0 | **Ratified**: 2025-11-06 | **Last Amended**: 2025-11-06

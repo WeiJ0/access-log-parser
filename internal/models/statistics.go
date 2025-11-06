@@ -126,3 +126,54 @@ func (s *Statistics) GetTotalBytesMB() float64 {
 func (s *Statistics) GetTotalBytesGB() float64 {
 	return float64(s.TotalBytes) / (1024 * 1024 * 1024)
 }
+
+// Validate 驗證 Statistics 的資料一致性
+// 返回 ValidationError 如果驗證失敗
+func (s *Statistics) Validate() error {
+	// 驗證總請求數不為負數
+	if s.TotalRequests < 0 {
+		return &ValidationError{
+			Field:   "TotalRequests",
+			Value:   string(rune(s.TotalRequests)),
+			Message: "總請求數不能為負數",
+		}
+	}
+	
+	// 驗證唯一 IP 數量不為負數
+	if s.UniqueIPs < 0 {
+		return &ValidationError{
+			Field:   "UniqueIPs",
+			Value:   string(rune(s.UniqueIPs)),
+			Message: "唯一 IP 數量不能為負數",
+		}
+	}
+	
+	// 驗證總傳輸量不為負數
+	if s.TotalBytes < 0 {
+		return &ValidationError{
+			Field:   "TotalBytes",
+			Value:   string(rune(s.TotalBytes)),
+			Message: "總傳輸量不能為負數",
+		}
+	}
+	
+	// 驗證錯誤率在有效範圍內（0-100）
+	if s.ErrorRate < 0 || s.ErrorRate > 100 {
+		return &ValidationError{
+			Field:   "ErrorRate",
+			Value:   string(rune(int(s.ErrorRate))),
+			Message: "錯誤率必須在 0-100 範圍內",
+		}
+	}
+	
+	// 驗證錯誤數量一致性
+	if s.ErrorCount != s.ClientErrorCount+s.ServerErrorCount {
+		return &ValidationError{
+			Field:   "ErrorCount",
+			Value:   "",
+			Message: "錯誤總數應等於客戶端錯誤數加伺服器錯誤數",
+		}
+	}
+	
+	return nil
+}

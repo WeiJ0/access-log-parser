@@ -48,9 +48,9 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T001 Create Go project structure per implementation plan (go.mod, main.go, etc.)
+- [ ] T002 Initialize Go project with required dependencies (go mod init, go mod tidy)
+- [ ] T003 [P] Configure Go linting tools (gofmt, golint, go vet) and formatting
 
 ---
 
@@ -60,14 +60,15 @@ description: "Task list template for feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-Examples of foundational tasks (adjust based on your project):
+Examples of foundational tasks (adjust based on your Go project):
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T004 Setup Go project basic structure (cmd/, pkg/, internal/ directories)
+- [ ] T005 [P] Implement logging infrastructure using structured logging (logrus/zap)
+- [ ] T006 [P] Setup configuration management (viper/flag packages)
+- [ ] T007 Create base interfaces and types that all stories depend on
+- [ ] T008 Configure error handling patterns and custom error types
+- [ ] T009 Setup benchmarking framework and performance monitoring
+- [ ] T010 Configure testing infrastructure (testify, testing package setup)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -83,17 +84,19 @@ Examples of foundational tasks (adjust based on your project):
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T011 [P] [US1] Unit tests for [component] in [package]_test.go
+- [ ] T012 [P] [US1] Benchmark tests for [performance-critical-path] in [package]_bench_test.go
+- [ ] T013 [P] [US1] Integration test for [user journey] in [package]_integration_test.go
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T014 [P] [US1] Create [Entity1] type in pkg/[package]/[entity1].go
+- [ ] T015 [P] [US1] Create [Entity2] type in pkg/[package]/[entity2].go
+- [ ] T016 [US1] Implement [Service] interface in pkg/[package]/[service].go (depends on T014, T015)
+- [ ] T017 [US1] Implement [feature] in cmd/[command]/[feature].go or internal/[package]/[feature].go
+- [ ] T018 [US1] Add error handling and validation with custom error types
+- [ ] T019 [US1] Add structured logging for user story 1 operations
+- [ ] T020 [US1] Add performance monitoring and metrics collection
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 

@@ -31,7 +31,32 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+**模組化設計合規性**:
+- [ ] 每個功能設計為獨立模組
+- [ ] 模組具備自包含性和可獨立測試性
+- [ ] 模組有明確用途，非僅為組織目的
+
+**效能優化要求**:
+- [ ] 設計考慮 Go 語言並發特性（goroutines, channels）
+- [ ] 記憶體使用最佳化策略已規劃
+- [ ] 基準測試計畫已制定
+- [ ] 效能目標：100MB/秒解析速度，記憶體使用不超過檔案大小2倍
+
+**測試驅動開發**:
+- [ ] TDD 流程已規劃（測試先行 → 失敗 → 實作）
+- [ ] 單元測試和基準測試涵蓋計畫
+- [ ] 程式碼覆蓋率目標設定為 80% 以上
+
+**Go 語言最佳實踐**:
+- [ ] 遵循 Go 官方編程規範
+- [ ] gofmt、golint、go vet 檢查納入流程
+- [ ] 錯誤處理策略明確定義
+- [ ] 介面設計符合 Go 語言慣例
+
+**可觀測性要求**:
+- [ ] 結構化日誌記錄策略
+- [ ] 效能指標監控計畫
+- [ ] 錯誤追蹤和上下文資訊設計
 
 ## Project Structure
 
@@ -56,39 +81,47 @@ specs/[###-feature]/
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+# [REMOVE IF UNUSED] Option 1: Go single project (DEFAULT)
+cmd/
+├── [app-name]/          # Main application entry points
+│   └── main.go
+pkg/
+├── [package1]/          # Public packages (libraries)
+├── [package2]/
+└── [package3]/
+internal/
+├── [package1]/          # Private packages
+├── [package2]/
+└── [package3]/
+api/                     # API definitions (if applicable)
+configs/                 # Configuration files
+scripts/                 # Build and deployment scripts
+docs/                    # Additional documentation
 
-tests/
-├── contract/
-├── integration/
-└── unit/
+# [REMOVE IF UNUSED] Option 2: Go microservices (when multiple services detected)
+services/
+├── [service1]/
+│   ├── cmd/
+│   │   └── main.go
+│   ├── internal/
+│   └── pkg/
+├── [service2]/
+│   ├── cmd/
+│   │   └── main.go
+│   ├── internal/
+│   └── pkg/
+└── shared/
+    └── pkg/            # Shared libraries between services
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+# [REMOVE IF UNUSED] Option 3: Go library project (when creating reusable library)
+pkg/
+├── [library-name]/     # Main library package
+├── [subpackage1]/
+└── [subpackage2]/
+examples/               # Usage examples
+cmd/
+└── [tool-name]/        # Optional CLI tool
+    └── main.go
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real

@@ -18,14 +18,14 @@
 
 - [X] T001 建立 Go 專案結構（依據 plan.md 定義的 Wails 架構）
 - [X] T002 初始化 Go 模組：執行 `go mod init github.com/yourusername/access-log-analyzer`
-- [ ] T003 安裝 Wails CLI：執行 `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
+- [X] T003 安裝 Wails CLI：執行 `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
 - [ ] T004 初始化 Wails 專案：執行 `wails init -n apache-log-analyzer -t vanilla-ts`
-- [ ] T005 [P] 配置 wails.json 設定檔（應用程式名稱、版本、建置選項）
-- [ ] T006 [P] 安裝 Go 後端依賴套件（excelize v2, zerolog, testify）
+- [X] T005 [P] 配置 wails.json 設定檔（應用程式名稱、版本、建置選項）
+- [X] T006 [P] 安裝 Go 後端依賴套件（excelize v2, zerolog, testify）
 - [X] T007 [P] 初始化前端專案：在 frontend/ 目錄執行 `npm install`
 - [X] T008 [P] 安裝前端依賴套件（React 18, TypeScript 5, ag-Grid Community, Material-UI）
 - [X] T009 [P] 配置 TypeScript tsconfig.json（strict mode, 路徑別名）
-- [ ] T010 [P] 配置 Go 工具鏈（gofmt, golint, go vet）在 scripts/ 或 Makefile
+- [X] T010 [P] 配置 Go 工具鏈（gofmt, golint, go vet）在 scripts/ 或 Makefile
 - [X] T011 建立專案目錄結構：cmd/, internal/, pkg/, frontend/src/, configs/, scripts/, docs/
 
 ---
@@ -40,22 +40,22 @@
 
 - [X] T012 [P] 建立 LogEntry 結構定義在 internal/models/log_entry.go
 - [X] T013 [P] 建立 Statistics 相關結構（IPStatistics, PathStatistics, StatusCodeStatistics）在 internal/models/statistics.go
-- [ ] T014 [P] 建立自訂錯誤類型（ParseError, ValidationError）在 internal/models/errors.go
-- [ ] T015 [P] 建立 PerformanceMetrics 結構在 internal/models/metrics.go
-- [ ] T016 為所有模型新增 JSON 標籤和驗證函式
+- [X] T014 [P] 建立自訂錯誤類型（ParseError, ValidationError）在 internal/models/errors.go
+- [X] T015 [P] 建立 PerformanceMetrics 結構在 internal/models/metrics.go
+- [X] T016 為所有模型新增 JSON 標籤和驗證函式
 
 ### 日誌與監控基礎
 
 - [X] T017 [P] 配置 zerolog 結構化日誌在 pkg/logger/logger.go（JSON 格式，多層級）
-- [ ] T018 [P] 實作效能指標收集器在 internal/monitoring/metrics.go（追蹤吞吐量、記憶體使用）
+- [X] T018 [P] 實作效能指標收集器在 internal/monitoring/metrics.go（追蹤吞吐量、記憶體使用）
 - [X] T019 建立全域 logger 實例並在 main.go 初始化
 
 ### 測試基礎設施
 
-- [ ] T020 [P] 建立測試資料產生器在 scripts/generate_test_log.go（產生各種大小的測試 log 檔案）
-- [ ] T021 [P] 準備測試資料集在 testdata/ 目錄（valid.log, invalid.log, 100mb.log）
-- [ ] T022 [P] 配置 testify 測試框架和 helper 函式在 internal/testing/helpers.go
-- [ ] T023 [P] 建立基準測試框架在 internal/testing/benchmark.go
+- [X] T020 [P] 建立測試資料產生器在 scripts/generate_test_log.go（產生各種大小的測試 log 檔案）
+- [X] T021 [P] 準備測試資料集在 testdata/ 目錄（valid.log, invalid.log, 100mb.log）
+- [X] T022 [P] 配置 testify 測試框架和 helper 函式在 internal/testing/helpers.go
+- [X] T023 [P] 建立基準測試框架在 internal/testing/benchmark.go
 
 ### Wails 應用程式骨架
 
@@ -69,7 +69,7 @@
 - [X] T028 [P] 建立 TypeScript 型別定義在 frontend/src/types/log.ts（對應 Go 結構）
 - [X] T029 [P] 建立 API 服務封裝層在 frontend/src/services/logService.ts（封裝 Wails 呼叫）
 - [X] T030 [P] 配置 Material-UI 主題在 frontend/src/theme.ts（繁體中文，色彩配置）
-- [ ] T031 建立主應用程式結構在 frontend/src/App.tsx（路由、全域狀態）
+- [X] T031 建立主應用程式結構在 frontend/src/App.tsx（路由、全域狀態）
 
 **Checkpoint**: ✅ 基礎設施就緒 - 用戶故事實作現在可以並行開始
 
@@ -102,19 +102,19 @@
 
 ### 前端實作
 
-- [ ] T045 [P] [US1] 實作 TabPanel 分頁管理組件在 frontend/src/components/TabPanel.tsx（支援多檔案分頁）
-- [ ] T046 [P] [US1] 實作 LogTable 虛擬化表格組件在 frontend/src/components/LogTable.tsx（使用 ag-Grid，定義欄位）
-- [ ] T047 [P] [US1] 實作 ErrorSummary 錯誤摘要組件在 frontend/src/components/ErrorSummary.tsx（顯示錯誤數量和樣本）
-- [ ] T048 [US1] 實作檔案選擇和載入邏輯在 frontend/src/App.tsx（呼叫 SelectFile 和 ParseFile API）
-- [ ] T049 [US1] 實作解析進度指示器在 frontend/src/components/ProgressIndicator.tsx（顯示載入狀態）
-- [ ] T050 [US1] 實作分頁切換邏輯在 frontend/src/App.tsx（管理多個 ParseResult 狀態）
-- [ ] T051 [US1] 實作錯誤訊息顯示（檔案不存在、格式錯誤、超過 10GB 限制）
-- [ ] T052 [US1] 新增繁體中文 UI 文字和錯誤訊息
+- [X] T045 [P] [US1] 實作 TabPanel 分頁管理組件在 frontend/src/components/TabPanel.tsx（支援多檔案分頁）
+- [X] T046 [P] [US1] 實作 LogTable 虛擬化表格組件在 frontend/src/components/LogTable.tsx（使用 ag-Grid，定義欄位）
+- [X] T047 [P] [US1] 實作 ErrorSummary 錯誤摘要組件在 frontend/src/components/ErrorSummary.tsx（顯示錯誤數量和樣本）
+- [X] T048 [US1] 實作檔案選擇和載入邏輯在 frontend/src/App.tsx（呼叫 SelectFile 和 ParseFile API）
+- [X] T049 [US1] 實作解析進度指示器在 frontend/src/components/ProgressIndicator.tsx（顯示載入狀態）
+- [X] T050 [US1] 實作分頁切換邏輯在 frontend/src/App.tsx（管理多個 ParseResult 狀態）
+- [X] T051 [US1] 實作錯誤訊息顯示（檔案不存在、格式錯誤、超過 10GB 限制）
+- [X] T052 [US1] 新增繁體中文 UI 文字和錯誤訊息
 
 ### 整合與驗證
 
-- [ ] T053 [US1] 執行所有單元測試並確保通過（go test ./internal/parser -v）
-- [ ] T054 [US1] 執行基準測試並驗證效能目標（go test -bench=. -benchmem ./internal/parser）
+- [X] T053 [US1] 執行所有單元測試並確保通過（go test ./internal/parser -v）
+- [X] T054 [US1] 執行基準測試並驗證效能目標（go test -bench=. -benchmem ./internal/parser）
 - [ ] T055 [US1] 產生 100MB 測試檔案並驗證解析時間 ≤2 秒（60-80 MB/秒）
 - [ ] T056 [US1] 驗證記憶體使用 ≤1.2x 檔案大小（使用 1GB 測試檔案）
 - [ ] T057 [US1] 驗證虛擬化表格流暢度（100 萬筆記錄捲動延遲 ≤100ms）

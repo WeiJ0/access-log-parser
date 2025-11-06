@@ -80,3 +80,63 @@ func (e *LogEntry) ResponseSizeKB() float64 {
 func (e *LogEntry) ResponseSizeMB() float64 {
 	return float64(e.ResponseBytes) / (1024.0 * 1024.0)
 }
+
+// Validate 驗證 LogEntry 的必填欄位
+// 返回 ValidationError 如果驗證失敗
+func (e *LogEntry) Validate() error {
+	// 驗證 IP 位址不為空
+	if e.IP == "" {
+		return &ValidationError{
+			Field:   "IP",
+			Value:   "",
+			Message: "IP 位址不能為空",
+		}
+	}
+	
+	// 驗證時間戳不為零值
+	if e.Timestamp.IsZero() {
+		return &ValidationError{
+			Field:   "Timestamp",
+			Value:   "",
+			Message: "時間戳不能為空",
+		}
+	}
+	
+	// 驗證 HTTP 方法不為空
+	if e.Method == "" {
+		return &ValidationError{
+			Field:   "Method",
+			Value:   "",
+			Message: "HTTP 方法不能為空",
+		}
+	}
+	
+	// 驗證 URL 不為空
+	if e.URL == "" {
+		return &ValidationError{
+			Field:   "URL",
+			Value:   "",
+			Message: "URL 不能為空",
+		}
+	}
+	
+	// 驗證狀態碼在有效範圍內（100-599）
+	if e.StatusCode < 100 || e.StatusCode > 599 {
+		return &ValidationError{
+			Field:   "StatusCode",
+			Value:   string(rune(e.StatusCode)),
+			Message: "HTTP 狀態碼必須在 100-599 範圍內",
+		}
+	}
+	
+	// 驗證回應大小不為負數
+	if e.ResponseBytes < 0 {
+		return &ValidationError{
+			Field:   "ResponseBytes",
+			Value:   string(rune(e.ResponseBytes)),
+			Message: "回應大小不能為負數",
+		}
+	}
+	
+	return nil
+}

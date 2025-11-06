@@ -22,6 +22,10 @@ go.work.sum
 /frontend/node_modules/
 /wailsjs/
 
+# Wails 生成的綁定檔案（保留結構）
+frontend/wailsjs/go/
+frontend/wailsjs/runtime/
+
 # Node.js / TypeScript 前端
 node_modules/
 npm-debug.log*
@@ -54,6 +58,8 @@ coverage/
 *.coverprofile
 *.cover
 *.out
+coverage.out
+coverage.html
 
 # IDE 和編輯器
 .vscode/

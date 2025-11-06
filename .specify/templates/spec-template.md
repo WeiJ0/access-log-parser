@@ -113,3 +113,11 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+### Performance Criteria *(for Go applications)*
+
+- **PC-001**: [Processing speed, e.g., "Parse log files at minimum 100MB/second"]
+- **PC-002**: [Memory efficiency, e.g., "Memory usage not exceed 2x file size during processing"]
+- **PC-003**: [Concurrency, e.g., "Support processing N files simultaneously via goroutines"]
+- **PC-004**: [Response time, e.g., "CLI startup time under 100ms"]
+- **PC-005**: [Throughput, e.g., "Process minimum 10,000 log lines per second"]
