@@ -1,0 +1,24 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "apache-log-analyzer",
+  "outputfilename": "apache-log-analyzer",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  },
+  "info": {
+    "companyName": "YourCompany",
+    "productName": "Apache Log Analyzer",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2025",
+    "comments": "Apache 存取日誌分析工具 - 高效能解析、統計分析、Excel 匯出"
+  },
+  "wailsjsdir": "./frontend/src/wailsjs",
+  "assetdir": "./frontend/dist",
+  "build:dir": "./build",
+  "nsisType": "multiple"
+}
