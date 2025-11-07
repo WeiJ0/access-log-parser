@@ -68,13 +68,10 @@ func (a *App) SelectFile() SelectFileResponse {
 	
 	// 使用 a.ctx（Wails runtime context）而非參數 ctx
 	// 這確保在 Wails 桌面環境中正確開啟原生對話框
+	// 不限制檔案類型，因為 access log 可能有各種副檔名
 	filePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		Title: "選擇 Apache Log 檔案",
+		Title: "選擇 Apache Access Log 檔案",
 		Filters: []runtime.FileFilter{
-			{
-				DisplayName: "Log 檔案 (*.log)",
-				Pattern:     "*.log",
-			},
 			{
 				DisplayName: "所有檔案 (*.*)",
 				Pattern:     "*.*",
@@ -143,6 +140,16 @@ func (a *App) ParseFile(req ParseFileRequest) ParseFileResponse {
 	
 	// 建立解析器（自動使用所有 CPU 核心）
 	logParser := parser.NewParser(parser.FormatCombined, 0)
+	
+	// 驗證第一行是否為 Apache log 格式
+	// 提供快速回饋，避免解析不正確的檔案
+	if err := logParser.ValidateFirstLine(req.FilePath); err != nil {
+		a.log.Warn().Err(err).Str("file", req.FilePath).Msg("檔案格式驗證失敗")
+		return ParseFileResponse{
+			Success:      false,
+			ErrorMessage: err.Error(),
+		}
+	}
 	
 	// 解析檔案
 	result, err := logParser.ParseFile(req.FilePath, fileInfo.Size())

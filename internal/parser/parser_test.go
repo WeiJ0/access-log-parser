@@ -238,3 +238,54 @@ func TestLogEntry_Methods(t *testing.T) {
 		})
 	}
 }
+
+// TestValidateFirstLine 測試第一行格式驗證
+func TestValidateFirstLine(t *testing.T) {
+	parser := NewParser(FormatCombined, 1)
+	
+	testCases := []struct {
+		name        string
+		filepath    string
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name:        "有效的 Apache log 檔案",
+			filepath:    "../../testdata/valid.log",
+			expectError: false,
+		},
+		{
+			name:        "第一行無效格式檔案",
+			filepath:    "../../testdata/invalid_first_line.log",
+			expectError: true,
+			errorMsg:    "不符合 Apache Access Log 格式",
+		},
+		{
+			name:        "空檔案",
+			filepath:    "../../testdata/empty.log",
+			expectError: true,
+			errorMsg:    "檔案為空",
+		},
+		{
+			name:        "不存在的檔案",
+			filepath:    "../../testdata/nonexistent.log",
+			expectError: true,
+			errorMsg:    "無法開啟檔案",
+		},
+	}
+	
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := parser.ValidateFirstLine(tc.filepath)
+			
+			if tc.expectError {
+				require.Error(t, err)
+				if tc.errorMsg != "" {
+					assert.Contains(t, err.Error(), tc.errorMsg)
+				}
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}

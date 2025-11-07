@@ -321,3 +321,27 @@ func (p *Parser) ValidateFormat(filepath string, sampleLines int) (bool, error) 
 	successRate := float64(validCount) / float64(totalCount)
 	return successRate >= 0.8, nil
 }
+
+// ValidateFirstLine 快速驗證檔案第一行是否為 Apache log 格式
+// 用於在選擇檔案後立即檢查格式，提供快速回饋
+func (p *Parser) ValidateFirstLine(filepath string) error {
+	reader, err := apachelog.NewReader(filepath)
+	if err != nil {
+		return fmt.Errorf("無法開啟檔案: %w", err)
+	}
+	defer reader.Close()
+	
+	// 讀取第一行
+	_, line, hasMore := reader.ReadLine()
+	if !hasMore {
+		return fmt.Errorf("檔案為空")
+	}
+	
+	// 檢查是否符合 Apache log 格式
+	pattern := GetPattern(p.format)
+	if !pattern.MatchString(line) {
+		return fmt.Errorf("第一行不符合 Apache Access Log 格式。請確認檔案是 Apache Combined 或 Common 格式的 access log")
+	}
+	
+	return nil
+}
