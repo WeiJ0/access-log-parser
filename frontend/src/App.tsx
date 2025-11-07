@@ -33,18 +33,27 @@ import ErrorSummary from './components/ErrorSummary'
 import ProgressIndicator from './components/ProgressIndicator'
 import Dashboard, { type Statistics } from './components/Dashboard'
 import ExportProgress from './components/ExportProgress'
+import SearchBar from './components/SearchBar'
+import FilterPanel from './components/FilterPanel'
+import { SearchService, SearchCriteria } from './services/searchService'
+import { FilterService, FilterCriteria } from './services/filterService'
 
 // 檔案資訊介面
 interface FileInfo {
   path: string
   name: string
-  entries: LogEntry[]
+  entries: LogEntry[]  // 原始日誌記錄
+  filteredEntries: LogEntry[]  // 篩選/搜尋後的日誌記錄
   errorCount: number
   errorSamples: ParseError[]
   statistics: Statistics | null  // User Story 2: 統計資訊
   statTime: number  // 統計計算耗時（毫秒）
   isLoading: boolean
   error: string | null
+  // User Story 4: 搜尋和篩選狀態
+  searchCriteria: SearchCriteria | null
+  filterCriteria: FilterCriteria | null
+  showFilterPanel: boolean
 }
 
 function App() {
@@ -53,6 +62,10 @@ function App() {
   const [currentSubTab, setCurrentSubTab] = useState(0)  // 二級標籤頁（Dashboard/日誌表格）
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // User Story 4: 搜尋和篩選服務
+  const searchService = new SearchService()
+  const filterService = new FilterService()
 
   // 匯出狀態
   const [exporting, setExporting] = useState(false)
@@ -121,12 +134,17 @@ function App() {
         path: filePath,
         name: fileName,
         entries: [],
+        filteredEntries: [],  // User Story 4: 初始為空
         errorCount: 0,
         errorSamples: [],
         statistics: null,  // 統計資訊初始為 null
         statTime: 0,  // 統計耗時初始為 0
         isLoading: true,
         error: null,
+        // User Story 4: 搜尋篩選初始狀態
+        searchCriteria: null,
+        filterCriteria: null,
+        showFilterPanel: false,
       }
       
       const newFiles = [...files, newFile]
@@ -147,9 +165,11 @@ function App() {
       // 更新檔案資訊
       const updatedFiles = newFiles.map((f, i) => {
         if (i === newFiles.length - 1) {
+          const entries = logFile.entries || []
           return {
             ...f,
-            entries: logFile.entries || [],
+            entries: entries,
+            filteredEntries: entries,  // User Story 4: 初始顯示所有記錄
             errorCount: logFile.errorLines || 0,
             errorSamples: result.errorSamples || [],
             statistics: logFile.statistics || null,
@@ -274,6 +294,147 @@ function App() {
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`
     if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(2)} MB`
     return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`
+  }
+
+  /**
+   * User Story 4: 處理搜尋
+   * 根據搜尋條件篩選日誌記錄
+   */
+  const handleSearch = (criteria: SearchCriteria) => {
+    if (files.length === 0 || currentTab >= files.length) return
+    
+    const currentFile = files[currentTab]
+    
+    // 先套用篩選，再套用搜尋
+    let filtered = currentFile.entries
+    
+    // 如果有篩選條件，先篩選
+    if (currentFile.filterCriteria) {
+      filtered = filterService.filter(filtered, currentFile.filterCriteria)
+    }
+    
+    // 再套用搜尋
+    const searched = searchService.search(filtered, criteria)
+    
+    // 更新檔案資訊
+    const updatedFiles = files.map((f, i) => {
+      if (i === currentTab) {
+        return {
+          ...f,
+          filteredEntries: searched,
+          searchCriteria: criteria
+        }
+      }
+      return f
+    })
+    
+    setFiles(updatedFiles)
+  }
+
+  /**
+   * User Story 4: 清除搜尋
+   */
+  const handleClearSearch = () => {
+    if (files.length === 0 || currentTab >= files.length) return
+    
+    const currentFile = files[currentTab]
+    
+    // 重新套用篩選（如果有），否則顯示所有記錄
+    let filtered = currentFile.entries
+    if (currentFile.filterCriteria) {
+      filtered = filterService.filter(filtered, currentFile.filterCriteria)
+    }
+    
+    const updatedFiles = files.map((f, i) => {
+      if (i === currentTab) {
+        return {
+          ...f,
+          filteredEntries: filtered,
+          searchCriteria: null
+        }
+      }
+      return f
+    })
+    
+    setFiles(updatedFiles)
+  }
+
+  /**
+   * User Story 4: 處理篩選
+   */
+  const handleFilter = (criteria: FilterCriteria) => {
+    if (files.length === 0 || currentTab >= files.length) return
+    
+    const currentFile = files[currentTab]
+    
+    // 先套用篩選，再套用搜尋（如果有）
+    let filtered = filterService.filter(currentFile.entries, criteria)
+    
+    // 如果有搜尋條件，再套用搜尋
+    if (currentFile.searchCriteria) {
+      filtered = searchService.search(filtered, currentFile.searchCriteria)
+    }
+    
+    // 更新檔案資訊
+    const updatedFiles = files.map((f, i) => {
+      if (i === currentTab) {
+        return {
+          ...f,
+          filteredEntries: filtered,
+          filterCriteria: criteria
+        }
+      }
+      return f
+    })
+    
+    setFiles(updatedFiles)
+  }
+
+  /**
+   * User Story 4: 清除篩選
+   */
+  const handleClearFilter = () => {
+    if (files.length === 0 || currentTab >= files.length) return
+    
+    const currentFile = files[currentTab]
+    
+    // 重新套用搜尋（如果有），否則顯示所有記錄
+    let filtered = currentFile.entries
+    if (currentFile.searchCriteria) {
+      filtered = searchService.search(filtered, currentFile.searchCriteria)
+    }
+    
+    const updatedFiles = files.map((f, i) => {
+      if (i === currentTab) {
+        return {
+          ...f,
+          filteredEntries: filtered,
+          filterCriteria: null
+        }
+      }
+      return f
+    })
+    
+    setFiles(updatedFiles)
+  }
+
+  /**
+   * User Story 4: 切換篩選面板顯示/隱藏
+   */
+  const handleToggleFilterPanel = () => {
+    if (files.length === 0 || currentTab >= files.length) return
+    
+    const updatedFiles = files.map((f, i) => {
+      if (i === currentTab) {
+        return {
+          ...f,
+          showFilterPanel: !f.showFilterPanel
+        }
+      }
+      return f
+    })
+    
+    setFiles(updatedFiles)
   }
 
   // 關閉分頁
@@ -450,6 +611,39 @@ function App() {
                   
                   {/* 日誌明細 */}
                   <TabPanel value={currentSubTab} index={1}>
+                    {/* 搜尋列 */}
+                    <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+                      <SearchBar
+                        onSearch={handleSearch}
+                        onClear={handleClearSearch}
+                        onToggleFilter={handleToggleFilterPanel}
+                        searchStats={{
+                          total: file.entries.length,
+                          results: file.filteredEntries.length,
+                          percentage: file.entries.length > 0 
+                            ? (file.filteredEntries.length / file.entries.length) * 100 
+                            : 0
+                        }}
+                      />
+                    </Box>
+
+                    {/* 篩選面板 */}
+                    {file.showFilterPanel && (
+                      <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', bgcolor: 'grey.50' }}>
+                        <FilterPanel
+                          onApplyFilter={handleFilter}
+                          onClearFilter={handleClearFilter}
+                          filterStats={{
+                            total: file.entries.length,
+                            filtered: file.filteredEntries.length,
+                            percentage: file.entries.length > 0 
+                              ? (file.filteredEntries.length / file.entries.length) * 100 
+                              : 0
+                          }}
+                        />
+                      </Box>
+                    )}
+                    
                     {/* 錯誤摘要 */}
                     {file.errorCount > 0 && (
                       <Box sx={{ p: 2 }}>
@@ -461,7 +655,7 @@ function App() {
                     )}
                     
                     {/* 日誌表格 */}
-                    <LogTable entries={file.entries} />
+                    <LogTable entries={file.filteredEntries} />
                   </TabPanel>
                 </Box>
               )}
