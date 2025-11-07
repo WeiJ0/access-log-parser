@@ -9,43 +9,50 @@ import StatusCodeDistribution from './StatusCodeDistribution'
 import BotDetection from './BotDetection'
 
 // 統計資料介面（對應 Go internal/stats/statistics.go）
+// 注意：欄位名稱必須與 Go JSON 標籤匹配（小寫開頭）
 export interface Statistics {
   // 基本統計
-  TotalRequests: number
-  UniqueIPs: number
-  TotalBytes: number
+  totalRequests: number          // 總請求數
+  uniqueIPs: number              // 唯一 IP 數量
+  uniquePaths: number            // 唯一路徑數量
+  totalBytes: number             // 總傳輸量（位元組）
+  averageResponseSize: number    // 平均回應大小
   
-  // Top 10 IP（對應 IPStatistics）
-  TopIPs: Array<{
-    IP: string
-    Count: number
-    TotalBytes: number
-    UniqueURLs: number
+  // Top IP 統計
+  topIPs: Array<{
+    ip: string
+    requestCount: number
+    totalBytes: number
   }>
   
-  // Top 10 路徑（對應 PathStatistics）
-  TopPaths: Array<{
-    Path: string
-    Count: number
-    AvgBytes: number
-    Methods: Record<string, number>
+  // Top 路徑統計
+  topPaths: Array<{
+    path: string
+    requestCount: number
+    averageSize: number
+    errorRate: number
   }>
   
-  // 狀態碼分布（對應 StatusCodeStatistics）
-  StatusCodeDist: Array<{
-    Code: number
-    Count: number
-    Percentage: number
-  }>
+  // 狀態碼分布
+  statusCodeDistribution: {
+    success: number       // 2xx 成功
+    redirection: number   // 3xx 重定向
+    clientError: number   // 4xx 客戶端錯誤
+    serverError: number   // 5xx 伺服器錯誤
+    details: Record<number, number>  // 詳細狀態碼分布
+  }
   
-  // 機器人偵測
-  BotRequests: number
-  BotPercentage: number
-  TopBots: Array<{
-    UserAgent: string
-    Count: number
-    Percentage: number
-  }>
+  // 機器人統計
+  botStats: {
+    totalBotRequests: number
+    botPercentage: number
+    uniqueBots: number
+    topBots: Array<{
+      name: string
+      count: number
+      percentage: number
+    }>
+  }
 }
 
 interface DashboardProps {
@@ -83,7 +90,7 @@ function Dashboard({ statistics, statTime }: DashboardProps) {
               總請求數
             </Typography>
             <Typography variant="h5">
-              {statistics.TotalRequests.toLocaleString()}
+              {statistics.totalRequests.toLocaleString()}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -91,7 +98,7 @@ function Dashboard({ statistics, statTime }: DashboardProps) {
               唯一 IP 數
             </Typography>
             <Typography variant="h5">
-              {statistics.UniqueIPs.toLocaleString()}
+              {statistics.uniqueIPs.toLocaleString()}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -99,7 +106,7 @@ function Dashboard({ statistics, statTime }: DashboardProps) {
               總流量
             </Typography>
             <Typography variant="h5">
-              {(statistics.TotalBytes / (1024 * 1024)).toFixed(2)} MB
+              {(statistics.totalBytes / (1024 * 1024)).toFixed(2)} MB
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -117,25 +124,25 @@ function Dashboard({ statistics, statTime }: DashboardProps) {
       <Grid container spacing={3}>
         {/* Top 10 IP */}
         <Grid item xs={12} md={6}>
-          <TopIPsList topIPs={statistics.TopIPs} />
+          <TopIPsList topIPs={statistics.topIPs} />
         </Grid>
 
         {/* Top 10 路徑 */}
         <Grid item xs={12} md={6}>
-          <TopPathsList topPaths={statistics.TopPaths} />
+          <TopPathsList topPaths={statistics.topPaths} />
         </Grid>
 
         {/* 狀態碼分布 */}
         <Grid item xs={12} md={6}>
-          <StatusCodeDistribution statusCodes={statistics.StatusCodeDist} />
+          <StatusCodeDistribution distribution={statistics.statusCodeDistribution} />
         </Grid>
 
         {/* 機器人偵測 */}
         <Grid item xs={12} md={6}>
           <BotDetection
-            botRequests={statistics.BotRequests}
-            botPercentage={statistics.BotPercentage}
-            topBots={statistics.TopBots}
+            botRequests={statistics.botStats.totalBotRequests}
+            botPercentage={statistics.botStats.botPercentage}
+            topBots={statistics.botStats.topBots}
           />
         </Grid>
       </Grid>

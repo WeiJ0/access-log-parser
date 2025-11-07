@@ -13,11 +13,11 @@ import {
   TableRow,
 } from '@mui/material'
 
+// 匹配 Go internal/stats/statistics.go 的 IPStatistics 結構
 interface IPStatistics {
-  IP: string
-  Count: number
-  TotalBytes: number
-  UniqueURLs: number
+  ip: string           // IP 位址
+  requestCount: number // 請求次數
+  totalBytes: number   // 總傳輸量（位元組）
 }
 
 interface TopIPsListProps {
@@ -53,26 +53,22 @@ function TopIPsList({ topIPs }: TopIPsListProps) {
               <TableCell>IP 位址</TableCell>
               <TableCell align="right">請求次數</TableCell>
               <TableCell align="right">流量 (MB)</TableCell>
-              <TableCell align="right">唯一路徑</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {topIPs.map((ip, index) => (
-              <TableRow key={ip.IP} hover>
+              <TableRow key={ip.ip} hover>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
                   <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-                    {ip.IP}
+                    {ip.ip}
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  {ip.Count.toLocaleString()}
+                  {ip.requestCount.toLocaleString()}
                 </TableCell>
                 <TableCell align="right">
-                  {(ip.TotalBytes / (1024 * 1024)).toFixed(2)}
-                </TableCell>
-                <TableCell align="right">
-                  {ip.UniqueURLs}
+                  {(ip.totalBytes / (1024 * 1024)).toFixed(2)}
                 </TableCell>
               </TableRow>
             ))}
