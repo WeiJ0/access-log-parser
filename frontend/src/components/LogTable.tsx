@@ -6,12 +6,15 @@ import { useMemo } from 'react'
 import { AgGridReact } from 'ag-grid-react'
 import { ColDef } from 'ag-grid-community'
 import { Box } from '@mui/material'
-import type { LogEntry } from '../types/log'
+import type { models } from '../../wailsjs/wailsjs/go/models'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
 
+// 類型別名便於使用
+type LogEntry = models.LogEntry
+
 interface LogTableProps {
-  entries: LogEntry[]
+  entries: models.LogEntry[]
   height?: string | number
 }
 

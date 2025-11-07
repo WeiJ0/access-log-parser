@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"access-log-analyzer/pkg/logger"
 )
 
@@ -26,7 +27,10 @@ func NewApp() *App {
 // 初始化 Wails runtime 上下文和應用程式狀態
 func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
-	a.log.Info().Msg("應用程式 startup 完成")
+	a.log.Info().
+		Bool("ctx_nil", ctx == nil).
+		Str("ctx_type", fmt.Sprintf("%T", ctx)).
+		Msg("應用程式 startup 完成 - context 已儲存")
 }
 
 // Shutdown 在應用程式關閉時調用

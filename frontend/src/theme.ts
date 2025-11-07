@@ -1,7 +1,8 @@
 // Material-UI 主題配置
 // 文件路徑: frontend/src/theme.ts
 
-import { createTheme, zhTW } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles'
+import { zhTW } from '@mui/material/locale'
 
 /**
  * 應用程式主題配置

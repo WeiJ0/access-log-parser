@@ -17,7 +17,7 @@
     "copyright": "Copyright © 2025",
     "comments": "Apache 存取日誌分析工具 - 高效能解析、統計分析、Excel 匯出"
   },
-  "wailsjsdir": "./frontend/src/wailsjs",
+  "wailsjsdir": "./frontend/wailsjs",
   "assetdir": "./frontend/dist",
   "build:dir": "./build",
   "nsisType": "multiple"

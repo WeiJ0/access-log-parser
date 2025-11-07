@@ -1,15 +1,16 @@
 package app
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 	
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	
 	"access-log-analyzer/internal/models"
 	"access-log-analyzer/internal/parser"
+	"access-log-analyzer/internal/stats"
 )
 
 // ParseFileRequest 解析檔案的請求參數
@@ -46,11 +47,27 @@ type ValidateFormatResponse struct {
 
 // SelectFile 開啟檔案選擇對話框
 // 讓使用者選擇要解析的 log 檔案
-func (a *App) SelectFile(ctx context.Context) SelectFileResponse {
-	a.log.Info().Msg("開啟檔案選擇對話框")
+func (a *App) SelectFile() SelectFileResponse {
+	a.log.Info().
+		Bool("a_ctx_nil", a.ctx == nil).
+		Msg("SelectFile 被調用")
 	
-	// 開啟檔案選擇對話框
-	filePath, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{
+	// 檢查 a.ctx 是否為 nil
+	if a.ctx == nil {
+		a.log.Error().Msg("a.ctx 為 nil - Startup 可能未被調用或 context 未正確設置")
+		return SelectFileResponse{
+			Success:      false,
+			ErrorMessage: "應用程式 context 未初始化。請重新啟動應用程式。",
+		}
+	}
+	
+	a.log.Info().
+		Str("a_ctx_type", fmt.Sprintf("%T", a.ctx)).
+		Msg("準備呼叫 runtime.OpenFileDialog")
+	
+	// 使用 a.ctx（Wails runtime context）而非參數 ctx
+	// 這確保在 Wails 桌面環境中正確開啟原生對話框
+	filePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "選擇 Apache Log 檔案",
 		Filters: []runtime.FileFilter{
 			{
@@ -63,6 +80,11 @@ func (a *App) SelectFile(ctx context.Context) SelectFileResponse {
 			},
 		},
 	})
+	
+	a.log.Info().
+		Str("filePath", filePath).
+		Bool("has_error", err != nil).
+		Msg("OpenFileDialog 返回")
 	
 	if err != nil {
 		a.log.Error().Err(err).Msg("檔案選擇對話框錯誤")
@@ -91,7 +113,7 @@ func (a *App) SelectFile(ctx context.Context) SelectFileResponse {
 
 // ParseFile 解析指定的 log 檔案
 // 返回解析結果和統計資訊
-func (a *App) ParseFile(ctx context.Context, req ParseFileRequest) ParseFileResponse {
+func (a *App) ParseFile(req ParseFileRequest) ParseFileResponse {
 	a.log.Info().Str("file", req.FilePath).Msg("開始解析檔案")
 	
 	// 檢查檔案是否存在
@@ -130,6 +152,15 @@ func (a *App) ParseFile(ctx context.Context, req ParseFileRequest) ParseFileResp
 		}
 	}
 	
+	// 計算統計資訊（T070）
+	a.log.Info().Msg("開始計算統計資訊")
+	statStart := time.Now()
+	
+	calculator := stats.NewCalculator()
+	statistics := calculator.Calculate(result.Entries)
+	
+	statTime := time.Since(statStart)
+	
 	// 建立 LogFile 物件
 	logFile := &models.LogFile{
 		Path:        req.FilePath,
@@ -140,7 +171,9 @@ func (a *App) ParseFile(ctx context.Context, req ParseFileRequest) ParseFileResp
 		ParsedLines: result.ParsedLines,
 		ErrorLines:  result.ErrorLines,
 		Entries:     result.Entries,
+		Statistics:  statistics,  // 加入統計資料
 		ParseTime:   result.ParseTime.Milliseconds(),
+		StatTime:    statTime.Milliseconds(),  // 統計耗時（T071）
 		MemoryUsed:  result.MemoryUsed,
 	}
 	
@@ -153,6 +186,7 @@ func (a *App) ParseFile(ctx context.Context, req ParseFileRequest) ParseFileResp
 		Int("parsed", result.ParsedLines).
 		Int("errors", result.ErrorLines).
 		Float64("throughput_mb_s", result.ThroughputMB).
+		Int64("stat_time_ms", statTime.Milliseconds()).  // 記錄統計耗時（T071）
 		Msg("檔案解析完成")
 	
 	return ParseFileResponse{
@@ -164,7 +198,7 @@ func (a *App) ParseFile(ctx context.Context, req ParseFileRequest) ParseFileResp
 
 // ValidateLogFormat 快速驗證 log 檔案格式
 // 讀取前 100 行並檢查是否符合 Apache log 格式
-func (a *App) ValidateLogFormat(ctx context.Context, req ValidateFormatRequest) ValidateFormatResponse {
+func (a *App) ValidateLogFormat(req ValidateFormatRequest) ValidateFormatResponse {
 	a.log.Info().Str("file", req.FilePath).Msg("驗證檔案格式")
 	
 	// 檢查檔案是否存在
@@ -205,13 +239,13 @@ func (a *App) ValidateLogFormat(ctx context.Context, req ValidateFormatRequest) 
 
 // GetOpenFiles 取得所有已開啟的檔案列表
 // 返回檔案路徑和基本資訊
-func (a *App) GetOpenFiles(ctx context.Context) []string {
+func (a *App) GetOpenFiles() []string {
 	return a.state.GetTabs()
 }
 
 // CloseFile 關閉指定的檔案
 // 從應用程式狀態中移除檔案資料
-func (a *App) CloseFile(ctx context.Context, filePath string) bool {
+func (a *App) CloseFile(filePath string) bool {
 	a.log.Info().Str("file", filePath).Msg("關閉檔案")
 	
 	a.state.RemoveFile(filePath)
@@ -220,7 +254,7 @@ func (a *App) CloseFile(ctx context.Context, filePath string) bool {
 
 // GetFileData 取得指定檔案的資料
 // 用於切換分頁時重新載入資料
-func (a *App) GetFileData(ctx context.Context, filePath string) *models.LogFile {
+func (a *App) GetFileData(filePath string) *models.LogFile {
 	logFile, exists := a.state.GetFile(filePath)
 	if !exists {
 		return nil
@@ -230,12 +264,12 @@ func (a *App) GetFileData(ctx context.Context, filePath string) *models.LogFile 
 
 // SetActiveFile 設定當前活動的檔案
 // 用於追蹤使用者正在檢視的分頁
-func (a *App) SetActiveFile(ctx context.Context, filePath string) bool {
+func (a *App) SetActiveFile(filePath string) bool {
 	return a.state.SetActiveTab(filePath)
 }
 
 // GetActiveFile 取得當前活動的檔案路徑
 // 返回使用者正在檢視的分頁
-func (a *App) GetActiveFile(ctx context.Context) string {
+func (a *App) GetActiveFile() string {
 	return a.state.GetActiveTab()
 }

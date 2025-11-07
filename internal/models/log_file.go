@@ -21,8 +21,12 @@ type LogFile struct {
 	// 日誌資料
 	Entries      []LogEntry `json:"entries"`     // 所有日誌記錄
 	
+	// 統計資訊（User Story 2）
+	Statistics   interface{} `json:"statistics"`  // 統計分析結果
+	
 	// 效能指標
 	ParseTime    int64     `json:"parseTime"`    // 解析耗時（毫秒）
+	StatTime     int64     `json:"statTime"`     // 統計計算耗時（毫秒）
 	MemoryUsed   int64     `json:"memoryUsed"`   // 記憶體使用量（位元組）
 }
 

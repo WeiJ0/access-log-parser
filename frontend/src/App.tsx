@@ -1,7 +1,7 @@
 // 主應用程式組件
 // 文件路徑: frontend/src/App.tsx
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Container,
   AppBar,
@@ -15,15 +15,19 @@ import {
   CircularProgress,
 } from '@mui/material'
 import FolderOpenIcon from '@mui/icons-material/FolderOpen'
-import { SelectFile, ParseFile } from '../wailsjs/go/main/App'
-// Note: 這些函式目前還未在 Go 後端實作完成，先使用佔位符
-// TODO: 在後端實作完成後，這裡會自動綁定到 Go 函式
+// 匯入 Wails 綁定的 API 和類型
+import * as AppAPI from '../wailsjs/wailsjs/go/app/App'
+import type { models } from '../wailsjs/wailsjs/go/models'
+import type { parser } from '../wailsjs/wailsjs/go/models'
 
-import type { LogEntry } from './types/log'
+// 使用 Wails 生成的類型別名
+type LogEntry = models.LogEntry
+type ParseError = parser.ParseError
 import TabPanel from './components/TabPanel'
 import LogTable from './components/LogTable'
 import ErrorSummary from './components/ErrorSummary'
 import ProgressIndicator from './components/ProgressIndicator'
+import Dashboard, { type Statistics } from './components/Dashboard'
 
 // 檔案資訊介面
 interface FileInfo {
@@ -31,7 +35,9 @@ interface FileInfo {
   name: string
   entries: LogEntry[]
   errorCount: number
-  errorSamples: string[]
+  errorSamples: ParseError[]
+  statistics: Statistics | null  // User Story 2: 統計資訊
+  statTime: number  // 統計計算耗時（毫秒）
   isLoading: boolean
   error: string | null
 }
@@ -39,8 +45,26 @@ interface FileInfo {
 function App() {
   const [files, setFiles] = useState<FileInfo[]>([])
   const [currentTab, setCurrentTab] = useState(0)
+  const [currentSubTab, setCurrentSubTab] = useState(0)  // 二級標籤頁（Dashboard/日誌表格）
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // 檢查 Wails runtime 是否已載入
+  useEffect(() => {
+    const runtimeCheck = {
+      window: typeof window,
+      windowGo: typeof (window as any)['go'],
+      windowGoKeys: (window as any)['go'] ? Object.keys((window as any)['go']) : [],
+      appApi: typeof AppAPI,
+      selectFile: typeof AppAPI.SelectFile
+    }
+    console.log('Wails runtime check:', runtimeCheck)
+    
+    // 如果 window.go 不存在，顯示錯誤
+    if (!(window as any)['go']) {
+      setError('Wails runtime 未載入！window.go 不存在')
+    }
+  }, [])
 
   // 處理檔案選擇
   const handleSelectFile = async () => {
@@ -48,13 +72,26 @@ function App() {
       setError(null)
       setLoading(true)
 
-      // 呼叫 Wails API 選擇檔案
-      const filePath = await SelectFile()
+      console.log('開始選擇檔案...')
+      console.log('AppAPI.SelectFile 類型:', typeof AppAPI.SelectFile)
+      console.log('window.go 存在:', typeof (window as any)['go'])
       
-      if (!filePath) {
+      // 呼叫 Wails API 選擇檔案
+      // 不需要傳遞 context 參數
+      const response = await AppAPI.SelectFile()
+      
+      console.log('SelectFile 回應:', response)
+      
+      if (!response || !response.success || !response.filePath) {
+        console.log('檔案選擇失敗或取消:', response?.errorMessage)
         setLoading(false)
+        if (response?.errorMessage && response.errorMessage !== '使用者取消選擇') {
+          setError(response.errorMessage)
+        }
         return
       }
+      
+      const filePath = response.filePath
 
       // 檢查檔案是否已經開啟
       const existingIndex = files.findIndex(f => f.path === filePath)
@@ -74,6 +111,8 @@ function App() {
         entries: [],
         errorCount: 0,
         errorSamples: [],
+        statistics: null,  // 統計資訊初始為 null
+        statTime: 0,  // 統計耗時初始為 0
         isLoading: true,
         error: null,
       }
@@ -83,16 +122,26 @@ function App() {
       setCurrentTab(newFiles.length - 1)
 
       // 呼叫 Wails API 解析檔案
-      const result = await ParseFile(filePath)
+      // 不需要傳遞 context 參數
+      const result = await AppAPI.ParseFile({ filePath })
+      
+      // 檢查解析是否成功
+      if (!result.success || !result.logFile) {
+        throw new Error(result.errorMessage || '解析檔案失敗')
+      }
+      
+      const logFile = result.logFile
       
       // 更新檔案資訊
       const updatedFiles = newFiles.map((f, i) => {
         if (i === newFiles.length - 1) {
           return {
             ...f,
-            entries: result.entries || [],
-            errorCount: result.errorCount || 0,
+            entries: logFile.entries || [],
+            errorCount: logFile.errorLines || 0,
             errorSamples: result.errorSamples || [],
+            statistics: logFile.statistics || null,
+            statTime: logFile.statTime || 0,
             isLoading: false,
             error: null,
           }
@@ -105,7 +154,8 @@ function App() {
 
     } catch (err) {
       console.error('載入檔案失敗:', err)
-      setError(err instanceof Error ? err.message : '未知錯誤')
+      const errorMsg = err instanceof Error ? err.message : String(err)
+      setError(`錯誤: ${errorMsg}`)
       setLoading(false)
       
       // 移除載入失敗的檔案
@@ -153,6 +203,21 @@ function App() {
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ m: 2 }}>
           {error}
+        </Alert>
+      )}
+      
+      {/* 除錯資訊 */}
+      {!(window as any)['go'] && (
+        <Alert severity="warning" sx={{ m: 2 }}>
+          <Typography variant="body2">
+            <strong>除錯資訊：</strong>Wails runtime 未載入
+          </Typography>
+          <Typography variant="caption" component="pre" sx={{ mt: 1 }}>
+            {JSON.stringify({
+              windowGo: typeof (window as any)['go'],
+              location: window.location.href
+            }, null, 2)}
+          </Typography>
         </Alert>
       )}
 
@@ -209,7 +274,8 @@ function App() {
                 <Alert severity="error">{file.error}</Alert>
               ) : (
                 <Box>
-                  <Box sx={{ mb: 2 }}>
+                  {/* 檔案資訊摘要 */}
+                  <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
                     <Typography variant="h6" gutterBottom>
                       {file.name}
                     </Typography>
@@ -218,16 +284,34 @@ function App() {
                     </Typography>
                   </Box>
                   
-                  {/* 錯誤摘要 */}
-                  {file.errorCount > 0 && (
-                    <ErrorSummary
-                      errorCount={file.errorCount}
-                      errorSamples={file.errorSamples}
-                    />
-                  )}
+                  {/* 二級標籤頁 */}
+                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={currentSubTab} onChange={(_e, v) => setCurrentSubTab(v)}>
+                      <Tab label="統計儀表板" />
+                      <Tab label="日誌明細" />
+                    </Tabs>
+                  </Box>
                   
-                  {/* 日誌表格 */}
-                  <LogTable entries={file.entries} />
+                  {/* 統計儀表板 */}
+                  <TabPanel value={currentSubTab} index={0}>
+                    <Dashboard statistics={file.statistics} statTime={file.statTime} />
+                  </TabPanel>
+                  
+                  {/* 日誌明細 */}
+                  <TabPanel value={currentSubTab} index={1}>
+                    {/* 錯誤摘要 */}
+                    {file.errorCount > 0 && (
+                      <Box sx={{ p: 2 }}>
+                        <ErrorSummary
+                          errorCount={file.errorCount}
+                          errorSamples={file.errorSamples}
+                        />
+                      </Box>
+                    )}
+                    
+                    {/* 日誌表格 */}
+                    <LogTable entries={file.entries} />
+                  </TabPanel>
                 </Box>
               )}
             </TabPanel>

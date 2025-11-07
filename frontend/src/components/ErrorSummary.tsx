@@ -16,10 +16,11 @@ import {
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import type { parser } from '../../wailsjs/wailsjs/go/models'
 
 interface ErrorSummaryProps {
   errorCount: number
-  errorSamples: string[]
+  errorSamples: parser.ParseError[]
   maxSamples?: number
 }
 
@@ -95,10 +96,10 @@ export default function ErrorSummary({
                             margin: 0,
                           }}
                         >
-                          {sample}
+                          {sample.line}
                         </Typography>
                       }
-                      secondary={`錯誤樣本 ${index + 1}`}
+                      secondary={`第 ${sample.lineNumber} 行：${sample.error}`}
                     />
                   </ListItem>
                 ))}

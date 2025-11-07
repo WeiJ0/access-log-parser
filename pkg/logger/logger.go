@@ -1,7 +1,9 @@
 package logger
 
 import (
+	"io"
 	"os"
+	"path/filepath"
 	"time"
 	
 	"github.com/rs/zerolog"
@@ -22,10 +24,30 @@ func Init() {
 	// 設定人類可讀的格式（開發模式）
 	// 生產環境可切換為 JSON 格式
 	zerolog.TimeFieldFormat = time.RFC3339
-	output := zerolog.ConsoleWriter{
-		Out:        os.Stdout,
-		TimeFormat: "2006-01-02 15:04:05",
+	
+	// 創建多輸出：控制台 + 檔案
+	writers := []io.Writer{
+		zerolog.ConsoleWriter{
+			Out:        os.Stdout,
+			TimeFormat: "2006-01-02 15:04:05",
+		},
 	}
+	
+	// 嘗試創建日誌檔案
+	logFile, err := os.OpenFile(
+		filepath.Join(".", "app.log"),
+		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
+		0666,
+	)
+	if err == nil {
+		writers = append(writers, zerolog.ConsoleWriter{
+			Out:        logFile,
+			TimeFormat: "2006-01-02 15:04:05",
+			NoColor:    true,
+		})
+	}
+	
+	output := io.MultiWriter(writers...)
 	
 	// 建立日誌記錄器
 	logger := zerolog.New(output).
