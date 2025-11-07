@@ -14,25 +14,28 @@ import {
   LinearProgress,
   Box,
   Chip,
+  Grid,
 } from '@mui/material'
 
-interface StatusCodeStat {
-  Code: number
-  Count: number
-  Percentage: number
+interface StatusCodeDistribution {
+  success: number
+  redirection: number
+  clientError: number
+  serverError: number
+  details: Record<number, number>
 }
 
 interface StatusCodeDistributionProps {
-  statusCodes: StatusCodeStat[]
+  distribution: StatusCodeDistribution
 }
 
 /**
  * StatusCodeDistribution 元件 - 顯示 HTTP 狀態碼分布統計
  * 
- * @param statusCodes - 狀態碼統計資料陣列（已排序）
+ * @param distribution - 狀態碼分布統計資料
  */
-function StatusCodeDistribution({ statusCodes }: StatusCodeDistributionProps) {
-  if (!statusCodes || statusCodes.length === 0) {
+function StatusCodeDistribution({ distribution }: StatusCodeDistributionProps) {
+  if (!distribution || !distribution.details) {
     return (
       <Paper sx={{ p: 3, textAlign: 'center' }}>
         <Typography variant="body2" color="text.secondary">
@@ -60,13 +63,53 @@ function StatusCodeDistribution({ statusCodes }: StatusCodeDistributionProps) {
   }
 
   // 計算總請求數
-  const totalRequests = statusCodes.reduce((sum, stat) => sum + stat.Count, 0)
+  const totalRequests = Object.values(distribution.details).reduce((sum, count) => sum + count, 0)
+
+  // 將 details 轉換為陣列並排序
+  const sortedDetails = Object.entries(distribution.details)
+    .map(([code, count]) => ({
+      code: Number(code),
+      count,
+      percentage: totalRequests > 0 ? (count / totalRequests * 100) : 0
+    }))
+    .sort((a, b) => b.count - a.count)
 
   return (
     <Paper sx={{ p: 2 }}>
       <Typography variant="h6" gutterBottom>
         HTTP 狀態碼分布
       </Typography>
+      
+      {/* 分類摘要 */}
+      <Box sx={{ mb: 2 }}>
+        <Grid container spacing={1}>
+          <Grid item xs={6} sm={3}>
+            <Box sx={{ p: 1, bgcolor: '#e8f5e9', borderRadius: 1 }}>
+              <Typography variant="caption" color="text.secondary">成功 (2xx)</Typography>
+              <Typography variant="h6">{distribution.success.toLocaleString()}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Box sx={{ p: 1, bgcolor: '#e3f2fd', borderRadius: 1 }}>
+              <Typography variant="caption" color="text.secondary">重新導向 (3xx)</Typography>
+              <Typography variant="h6">{distribution.redirection.toLocaleString()}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Box sx={{ p: 1, bgcolor: '#fff3e0', borderRadius: 1 }}>
+              <Typography variant="caption" color="text.secondary">客戶端錯誤 (4xx)</Typography>
+              <Typography variant="h6">{distribution.clientError.toLocaleString()}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Box sx={{ p: 1, bgcolor: '#ffebee', borderRadius: 1 }}>
+              <Typography variant="caption" color="text.secondary">伺服器錯誤 (5xx)</Typography>
+              <Typography variant="h6">{distribution.serverError.toLocaleString()}</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         總請求數: {totalRequests.toLocaleString()}
       </Typography>
@@ -82,13 +125,13 @@ function StatusCodeDistribution({ statusCodes }: StatusCodeDistributionProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {statusCodes.map((stat) => {
-              const statusInfo = getStatusInfo(stat.Code)
+            {sortedDetails.map((stat) => {
+              const statusInfo = getStatusInfo(stat.code)
               return (
-                <TableRow key={stat.Code} hover>
+                <TableRow key={stat.code} hover>
                   <TableCell>
                     <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
-                      {stat.Code}
+                      {stat.code}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -99,16 +142,16 @@ function StatusCodeDistribution({ statusCodes }: StatusCodeDistributionProps) {
                     />
                   </TableCell>
                   <TableCell align="right">
-                    {stat.Count.toLocaleString()}
+                    {stat.count.toLocaleString()}
                   </TableCell>
                   <TableCell align="right">
-                    {stat.Percentage.toFixed(2)}%
+                    {stat.percentage.toFixed(2)}%
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <LinearProgress
                         variant="determinate"
-                        value={stat.Percentage}
+                        value={Math.min(stat.percentage, 100)}
                         sx={{
                           flexGrow: 1,
                           height: 8,

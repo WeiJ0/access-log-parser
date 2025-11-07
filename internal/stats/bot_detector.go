@@ -20,6 +20,14 @@ type BotStats struct {
 	HumanRequests  int            `json:"humanRequests"`  // 人類請求數
 	BotPercentage  float64        `json:"botPercentage"`  // 機器人請求百分比
 	BotTypes       map[string]int `json:"botTypes"`       // 各類型機器人的數量
+	TopBots        []BotStat      `json:"topBots"`        // Top 10 機器人統計
+}
+
+// BotStat 單個機器人的統計資訊
+type BotStat struct {
+	Name       string  `json:"name"`       // 機器人類型名稱
+	Count      int     `json:"count"`      // 請求次數
+	Percentage float64 `json:"percentage"` // 佔總請求的百分比
 }
 
 // NewBotDetector 建立新的機器人偵測器
@@ -223,11 +231,52 @@ func (d *BotDetector) GetStats() BotStats {
 		HumanRequests: d.stats.HumanRequests,
 		BotPercentage: d.stats.BotPercentage,
 		BotTypes:      make(map[string]int),
+		TopBots:       make([]BotStat, 0),
 	}
 
 	// 複製機器人類型計數
 	for k, v := range d.stats.BotTypes {
 		statsCopy.BotTypes[k] = v
+	}
+
+	// 產生 Top 10 機器人統計
+	type botEntry struct {
+		name  string
+		count int
+	}
+	
+	// 將 map 轉換為切片以便排序
+	entries := make([]botEntry, 0, len(d.stats.BotTypes))
+	for name, count := range d.stats.BotTypes {
+		entries = append(entries, botEntry{name: name, count: count})
+	}
+	
+	// 按計數降序排序
+	// 使用簡單的冒泡排序（因為數量通常不多）
+	for i := 0; i < len(entries); i++ {
+		for j := i + 1; j < len(entries); j++ {
+			if entries[j].count > entries[i].count {
+				entries[i], entries[j] = entries[j], entries[i]
+			}
+		}
+	}
+	
+	// 取前 10 個（或更少）
+	limit := 10
+	if len(entries) < limit {
+		limit = len(entries)
+	}
+	
+	for i := 0; i < limit; i++ {
+		percentage := 0.0
+		if d.stats.Total > 0 {
+			percentage = float64(entries[i].count) / float64(d.stats.Total) * 100
+		}
+		statsCopy.TopBots = append(statsCopy.TopBots, BotStat{
+			Name:       entries[i].name,
+			Count:      entries[i].count,
+			Percentage: percentage,
+		})
 	}
 
 	return statsCopy

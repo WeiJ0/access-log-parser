@@ -19,9 +19,9 @@ import SmartToyIcon from '@mui/icons-material/SmartToy'
 import PersonIcon from '@mui/icons-material/Person'
 
 interface BotStat {
-  UserAgent: string
-  Count: number
-  Percentage: number
+  name: string
+  count: number
+  percentage: number
 }
 
 interface BotDetectionProps {
@@ -38,8 +38,13 @@ interface BotDetectionProps {
  * @param topBots - Top 10 機器人列表
  */
 function BotDetection({ botRequests, botPercentage, topBots }: BotDetectionProps) {
+  // 提供預設值以避免 undefined 錯誤
+  const safeBotRequests = botRequests ?? 0
+  const safeBotPercentage = botPercentage ?? 0
+  const safeTopBots = topBots ?? []
+  
   // 判斷機器人流量是否異常高
-  const isHighBotTraffic = botPercentage > 50
+  const isHighBotTraffic = safeBotPercentage > 50
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -57,7 +62,7 @@ function BotDetection({ botRequests, botPercentage, topBots }: BotDetectionProps
                 機器人請求
               </Typography>
               <Typography variant="h6">
-                {botRequests.toLocaleString()} ({botPercentage.toFixed(2)}%)
+                {safeBotRequests.toLocaleString()} ({safeBotPercentage.toFixed(2)}%)
               </Typography>
             </Box>
           </Box>
@@ -68,7 +73,7 @@ function BotDetection({ botRequests, botPercentage, topBots }: BotDetectionProps
                 人類請求
               </Typography>
               <Typography variant="h6">
-                {((100 - botPercentage).toFixed(2))}%
+                {((100 - safeBotPercentage).toFixed(2))}%
               </Typography>
             </Box>
           </Box>
@@ -79,31 +84,31 @@ function BotDetection({ botRequests, botPercentage, topBots }: BotDetectionProps
           <Box sx={{ display: 'flex', height: 24, borderRadius: 1, overflow: 'hidden' }}>
             <Box
               sx={{
-                width: `${botPercentage}%`,
+                width: `${safeBotPercentage}%`,
                 backgroundColor: isHighBotTraffic ? '#ff9800' : '#9e9e9e',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              {botPercentage > 10 && (
+              {safeBotPercentage > 10 && (
                 <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold' }}>
-                  機器人 {botPercentage.toFixed(1)}%
+                  機器人 {safeBotPercentage.toFixed(1)}%
                 </Typography>
               )}
             </Box>
             <Box
               sx={{
-                width: `${100 - botPercentage}%`,
+                width: `${100 - safeBotPercentage}%`,
                 backgroundColor: '#2196f3',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              {(100 - botPercentage) > 10 && (
+              {(100 - safeBotPercentage) > 10 && (
                 <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold' }}>
-                  人類 {(100 - botPercentage).toFixed(1)}%
+                  人類 {(100 - safeBotPercentage).toFixed(1)}%
                 </Typography>
               )}
             </Box>
@@ -119,7 +124,7 @@ function BotDetection({ botRequests, botPercentage, topBots }: BotDetectionProps
       </Box>
 
       {/* Top 10 機器人列表 */}
-      {topBots && topBots.length > 0 && (
+      {safeTopBots && safeTopBots.length > 0 && (
         <>
           <Typography variant="subtitle2" gutterBottom>
             Top 10 機器人 User-Agent
@@ -135,8 +140,8 @@ function BotDetection({ botRequests, botPercentage, topBots }: BotDetectionProps
                 </TableRow>
               </TableHead>
               <TableBody>
-                {topBots.map((bot, index) => (
-                  <TableRow key={`${bot.UserAgent}-${index}`} hover>
+                {safeTopBots.map((bot, index) => (
+                  <TableRow key={`${bot.name}-${index}`} hover>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>
                       <Typography
@@ -149,22 +154,22 @@ function BotDetection({ botRequests, botPercentage, topBots }: BotDetectionProps
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
                         }}
-                        title={bot.UserAgent}
+                        title={bot.name}
                       >
-                        {bot.UserAgent}
+                        {bot.name}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
-                      {bot.Count.toLocaleString()}
+                      {bot.count.toLocaleString()}
                     </TableCell>
                     <TableCell align="right">
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Typography variant="body2">
-                          {bot.Percentage.toFixed(2)}%
+                          {bot.percentage.toFixed(2)}%
                         </Typography>
                         <LinearProgress
                           variant="determinate"
-                          value={bot.Percentage}
+                          value={bot.percentage}
                           sx={{
                             width: 60,
                             height: 6,
@@ -181,7 +186,7 @@ function BotDetection({ botRequests, botPercentage, topBots }: BotDetectionProps
         </>
       )}
 
-      {(!topBots || topBots.length === 0) && (
+      {(!safeTopBots || safeTopBots.length === 0) && (
         <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mt: 2 }}>
           未偵測到機器人流量
         </Typography>

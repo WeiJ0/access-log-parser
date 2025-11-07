@@ -44,9 +44,11 @@ export interface Statistics {
   
   // 機器人統計
   botStats: {
-    totalBotRequests: number
-    botPercentage: number
-    uniqueBots: number
+    total: number              // 總請求數
+    botRequests: number        // 機器人請求數
+    humanRequests: number      // 人類請求數
+    botPercentage: number      // 機器人百分比
+    botTypes: Record<string, number>  // 機器人類型分布
     topBots: Array<{
       name: string
       count: number
@@ -140,7 +142,7 @@ function Dashboard({ statistics, statTime }: DashboardProps) {
         {/* 機器人偵測 */}
         <Grid item xs={12} md={6}>
           <BotDetection
-            botRequests={statistics.botStats.totalBotRequests}
+            botRequests={statistics.botStats.botRequests}
             botPercentage={statistics.botStats.botPercentage}
             topBots={statistics.botStats.topBots}
           />

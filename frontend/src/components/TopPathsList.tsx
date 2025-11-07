@@ -16,10 +16,10 @@ import {
 } from '@mui/material'
 
 interface PathStatistics {
-  Path: string
-  Count: number
-  AvgBytes: number
-  Methods: Record<string, number>
+  path: string
+  requestCount: number
+  averageSize: number
+  errorRate: number
 }
 
 interface TopPathsListProps {
@@ -42,24 +42,12 @@ function TopPathsList({ topPaths }: TopPathsListProps) {
     )
   }
 
-  // 取得主要 HTTP 方法
-  const getPrimaryMethod = (methods: Record<string, number>): string => {
-    if (!methods || Object.keys(methods).length === 0) return 'N/A'
-    
-    return Object.entries(methods)
-      .sort(([, a], [, b]) => b - a)
-      .map(([method]) => method)
-      .slice(0, 2)
-      .join(', ')
-  }
-
-  // 根據 HTTP 方法取得顏色
-  const getMethodColor = (methodStr: string): 'primary' | 'success' | 'warning' | 'error' | 'default' => {
-    if (methodStr.includes('GET')) return 'primary'
-    if (methodStr.includes('POST')) return 'success'
-    if (methodStr.includes('PUT') || methodStr.includes('PATCH')) return 'warning'
-    if (methodStr.includes('DELETE')) return 'error'
-    return 'default'
+  // 根據錯誤率決定顯示顏色
+  const getErrorRateColor = (errorRate: number): 'success' | 'warning' | 'error' | 'default' => {
+    if (errorRate === 0) return 'success'
+    if (errorRate < 5) return 'default'
+    if (errorRate < 20) return 'warning'
+    return 'error'
   }
 
   return (
@@ -75,14 +63,13 @@ function TopPathsList({ topPaths }: TopPathsListProps) {
               <TableCell>路徑</TableCell>
               <TableCell align="right">請求次數</TableCell>
               <TableCell align="right">平均回應 (KB)</TableCell>
-              <TableCell align="center">主要方法</TableCell>
+              <TableCell align="center">錯誤率</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {topPaths.map((path, index) => {
-              const primaryMethod = getPrimaryMethod(path.Methods)
               return (
-                <TableRow key={`${path.Path}-${index}`} hover>
+                <TableRow key={`${path.path}-${index}`} hover>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <Typography
@@ -94,23 +81,23 @@ function TopPathsList({ topPaths }: TopPathsListProps) {
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
                       }}
-                      title={path.Path}
+                      title={path.path}
                     >
-                      {path.Path}
+                      {path.path}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    {path.Count.toLocaleString()}
+                    {path.requestCount.toLocaleString()}
                   </TableCell>
                   <TableCell align="right">
-                    {(path.AvgBytes / 1024).toFixed(2)}
+                    {(path.averageSize / 1024).toFixed(2)}
                   </TableCell>
                   <TableCell align="center">
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
                       <Chip
-                        label={primaryMethod}
+                        label={`${path.errorRate.toFixed(2)}%`}
                         size="small"
-                        color={getMethodColor(primaryMethod)}
+                        color={getErrorRateColor(path.errorRate)}
                       />
                     </Box>
                   </TableCell>
