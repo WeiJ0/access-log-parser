@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"access-log-analyzer/internal/models"
+	"access-log-analyzer/internal/stats"
 	"access-log-analyzer/pkg/logger"
 
 	"github.com/xuri/excelize/v2"
@@ -80,9 +80,6 @@ func (e *XLSXExporter) Export(logs []*models.LogEntry, stats *models.Statistics,
 	f := excelize.NewFile()
 	defer f.Close()
 	
-	// 刪除預設工作表
-	f.DeleteSheet(DefaultSheetName)
-	
 	// 創建三個工作表
 	if err := e.createLogEntriesWorksheet(f, logs); err != nil {
 		return nil, fmt.Errorf("建立日誌條目工作表失敗: %w", err)
@@ -96,8 +93,14 @@ func (e *XLSXExporter) Export(logs []*models.LogEntry, stats *models.Statistics,
 		return nil, fmt.Errorf("建立機器人偵測工作表失敗: %w", err)
 	}
 	
+	// 刪除預設的 Sheet1（如果存在）
+	if idx, err := f.GetSheetIndex(DefaultSheetName); err == nil && idx >= 0 {
+		f.DeleteSheet(DefaultSheetName)
+	}
+	
 	// 設定預設工作表為日誌條目
-	f.SetActiveSheet(0)
+	idx, _ := f.GetSheetIndex("日誌條目")
+	f.SetActiveSheet(idx)
 	
 	// 確保目錄存在
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
@@ -310,7 +313,10 @@ func (e *XLSXExporter) writeDataNormal(f *excelize.File, sheetName string, data 
 		
 		// 設定自動調整列寬
 		for colIdx := range data[0] {
-			colName := excelize.ToAlphaString(colIdx)
+			colName, err := excelize.ColumnNumberToName(colIdx + 1)
+			if err != nil {
+				continue
+			}
 			f.SetColWidth(sheetName, colName, colName, 15)
 		}
 	}
@@ -423,4 +429,123 @@ func (e *XLSXExporter) GetSupportedFormats() []string {
 // GetMaxRecords 取得最大支援的記錄數
 func (e *XLSXExporter) GetMaxRecords() int64 {
 	return MaxExcelRows - 1 // 減去標題行
+}
+
+// ExportWithStatsStatistics 使用 stats.Statistics 類型匯出
+// 這是一個適配器方法，將 stats.Statistics 轉換為可匯出的格式
+func (e *XLSXExporter) ExportWithStatsStatistics(logs []*models.LogEntry, statsData *stats.Statistics, filePath string) (*ExportResult, error) {
+	startTime := time.Now()
+	
+	e.logger.Info().
+		Str("filePath", filePath).
+		Int("logCount", len(logs)).
+		Bool("streamingMode", e.streamingMode).
+		Msg("開始 Excel 匯出 (stats.Statistics)")
+	
+	// 驗證輸入參數
+	if len(logs) == 0 {
+		return nil, fmt.Errorf("日誌條目不能為空")
+	}
+	if statsData == nil {
+		return nil, fmt.Errorf("統計資料不能為空")
+	}
+	if filePath == "" {
+		return nil, fmt.Errorf("檔案路徑不能為空")
+	}
+	
+	warnings := make([]string, 0)
+	
+	// 檢查 Excel 行數限制
+	totalRows := int64(len(logs)) + 1 // +1 for header
+	truncatedRows := int64(0)
+	if totalRows > MaxExcelRows {
+		truncatedRows = totalRows - MaxExcelRows
+		logs = logs[:MaxExcelRows-1] // 保留標題行的空間
+		warnings = append(warnings, fmt.Sprintf("資料超過 Excel 限制，截斷了 %d 行", truncatedRows))
+	}
+	
+	// 創建 Excel 檔案
+	f := excelize.NewFile()
+	defer f.Close()
+	
+	// 創建日誌條目工作表
+	if err := e.createLogEntriesWorksheet(f, logs); err != nil {
+		return nil, fmt.Errorf("建立日誌條目工作表失敗: %w", err)
+	}
+	
+	// 創建統計資料工作表（使用適配器）
+	if err := e.createStatsStatisticsWorksheet(f, statsData); err != nil {
+		return nil, fmt.Errorf("建立統計資料工作表失敗: %w", err)
+	}
+	
+	// 創建機器人偵測工作表
+	if err := e.createBotDetectionWorksheet(f, logs); err != nil {
+		return nil, fmt.Errorf("建立機器人偵測工作表失敗: %w", err)
+	}
+	
+	// 刪除預設的 Sheet1（如果存在）
+	if idx, err := f.GetSheetIndex(DefaultSheetName); err == nil && idx >= 0 {
+		f.DeleteSheet(DefaultSheetName)
+	}
+	
+	// 設定預設工作表為日誌條目
+	idx, _ := f.GetSheetIndex("日誌條目")
+	f.SetActiveSheet(idx)
+	
+	// 確保目錄存在
+	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
+		return nil, fmt.Errorf("建立目錄失敗: %w", err)
+	}
+	
+	// 儲存檔案
+	if err := f.SaveAs(filePath); err != nil {
+		return nil, fmt.Errorf("儲存檔案失敗: %w", err)
+	}
+	
+	// 取得檔案大小
+	fileInfo, err := os.Stat(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("取得檔案資訊失敗: %w", err)
+	}
+	
+	duration := time.Since(startTime)
+	
+	result := &ExportResult{
+		FilePath:      filePath,
+		TotalRecords:  int64(len(logs)),
+		FileSize:      fileInfo.Size(),
+		TruncatedRows: truncatedRows,
+		Duration:      duration.String(),
+		Warnings:      warnings,
+		CreatedAt:     time.Now(),
+	}
+	
+	e.logger.Info().
+		Str("filePath", filePath).
+		Int64("fileSize", result.FileSize).
+		Int64("records", result.TotalRecords).
+		Str("duration", duration.String()).
+		Msg("Excel 匯出完成")
+	
+	return result, nil
+}
+
+// createStatsStatisticsWorksheet 創建使用 stats.Statistics 的統計資料工作表
+func (e *XLSXExporter) createStatsStatisticsWorksheet(f *excelize.File, statsData *stats.Statistics) error {
+	sheetName := "統計資訊"
+	
+	// 創建工作表
+	_, err := f.NewSheet(sheetName)
+	if err != nil {
+		return err
+	}
+	
+	// 使用適配器格式化資料
+	data := e.formatter.FormatStatsStatistics(statsData)
+	
+	// 寫入資料
+	if e.streamingMode {
+		return e.writeDataWithStreaming(f, sheetName, data)
+	}
+	return e.writeDataNormal(f, sheetName, data)
 }

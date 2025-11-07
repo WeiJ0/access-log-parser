@@ -1,5 +1,64 @@
 export namespace app {
 	
+	export class ExportToExcelRequest {
+	    filePath: string;
+	    savePath: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ExportToExcelRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.filePath = source["filePath"];
+	        this.savePath = source["savePath"];
+	    }
+	}
+	
+	export class ExportToExcelResponse {
+	    success: boolean;
+	    exportPath: string;
+	    fileSize: number;
+	    totalRecords: number;
+	    truncatedRows: number;
+	    duration: string;
+	    warnings: string[];
+	    errorMessage: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ExportToExcelResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.success = source["success"];
+	        this.exportPath = source["exportPath"];
+	        this.fileSize = source["fileSize"];
+	        this.totalRecords = source["totalRecords"];
+	        this.truncatedRows = source["truncatedRows"];
+	        this.duration = source["duration"];
+	        this.warnings = source["warnings"];
+	        this.errorMessage = source["errorMessage"];
+	    }
+	}
+	
+	export class SelectSaveLocationResponse {
+	    success: boolean;
+	    savePath: string;
+	    errorMessage: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SelectSaveLocationResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.success = source["success"];
+	        this.savePath = source["savePath"];
+	        this.errorMessage = source["errorMessage"];
+	    }
+	}
+	
 	export class ParseFileRequest {
 	    filePath: string;
 	

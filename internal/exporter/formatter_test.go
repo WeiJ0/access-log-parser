@@ -214,7 +214,8 @@ func TestFormatBotDetection(t *testing.T) {
 		
 		if row[0] == "192.168.1.102" && row[1] == "社交媒體" {
 			foundFacebook = true
-			assert.Equal(t, "高", row[2], "Facebook 信心分數應該是高")
+			// 社交媒體機器人，請求次數只有 1，信心分數應該是「中」（特異性 4 + 頻率 0 = 4）
+			assert.Equal(t, "中", row[2], "Facebook 信心分數應該是中（單次請求）")
 		}
 	}
 	

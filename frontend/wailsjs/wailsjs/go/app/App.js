@@ -6,6 +6,10 @@ export function CloseFile(arg1) {
   return window['go']['app']['App']['CloseFile'](arg1);
 }
 
+export function ExportToExcel(arg1) {
+  return window['go']['app']['App']['ExportToExcel'](arg1);
+}
+
 export function GetActiveFile() {
   return window['go']['app']['App']['GetActiveFile']();
 }
@@ -24,6 +28,10 @@ export function ParseFile(arg1) {
 
 export function SelectFile() {
   return window['go']['app']['App']['SelectFile']();
+}
+
+export function SelectSaveLocation(arg1) {
+  return window['go']['app']['App']['SelectSaveLocation'](arg1);
 }
 
 export function SetActiveFile(arg1) {

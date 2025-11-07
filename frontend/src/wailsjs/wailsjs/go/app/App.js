@@ -37,3 +37,11 @@ export function SetActiveFile(arg1, arg2) {
 export function ValidateLogFormat(arg1, arg2) {
   return window['go']['app']['App']['ValidateLogFormat'](arg1, arg2);
 }
+
+export function SelectSaveLocation(arg1) {
+  return window['go']['app']['App']['SelectSaveLocation'](arg1);
+}
+
+export function ExportToExcel(arg1) {
+  return window['go']['app']['App']['ExportToExcel'](arg1);
+}

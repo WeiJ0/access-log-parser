@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"access-log-analyzer/internal/models"
-	"access-log-analyzer/internal/stats"
 )
 
 // Formatter 負責將 Go 資料結構轉換為 Excel 友善的格式

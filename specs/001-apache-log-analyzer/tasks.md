@@ -181,30 +181,30 @@
 
 ### 測試任務（TDD：測試先行）
 
-- [ ] T086 [P] [US3] 撰寫 Excel 匯出器單元測試在 internal/exporter/xlsx_test.go（驗證檔案結構）
-- [ ] T087 [P] [US3] 撰寫匯出效能基準測試在 internal/exporter/xlsx_bench_test.go（驗證 1M 記錄 ≤30 秒）
-- [ ] T088 [P] [US3] 撰寫格式化器測試在 internal/exporter/formatter_test.go（驗證資料轉換）
+- [X] T086 [P] [US3] 撰寫 Excel 匯出器單元測試在 internal/exporter/xlsx_test.go（驗證檔案結構）
+- [X] T087 [P] [US3] 撰寫匯出效能基準測試在 internal/exporter/xlsx_bench_test.go（驗證 1M 記錄 ≤30 秒）
+- [X] T088 [P] [US3] 撰寫格式化器測試在 internal/exporter/formatter_test.go（驗證資料轉換）
 
 ### 後端實作
 
-- [ ] T089 [P] [US3] 實作資料格式化器在 internal/exporter/formatter.go（將 Go 結構轉為 Excel 友善格式）
-- [ ] T090 [US3] 實作 XLSX 匯出器在 internal/exporter/xlsx.go（使用 excelize streaming writer）
-- [ ] T091 [US3] 實作「日誌條目」工作表生成在 internal/exporter/xlsx.go（包含所有欄位和標題）
-- [ ] T092 [US3] 實作「統計資料」工作表生成在 internal/exporter/xlsx.go（Top 10 IP、Top 10 路徑、狀態碼）
-- [ ] T093 [US3] 實作「機器人偵測」工作表生成在 internal/exporter/xlsx.go（IP、類型、信心分數）
-- [ ] T094 [US3] 處理 Excel 行數限制（1,048,576 行，超過時截斷並警告）
-- [ ] T095 [US3] 實作 ExportToExcel Wails API 在 internal/app/handlers.go（呼叫匯出器）
-- [ ] T096 [US3] 實作 SelectSaveLocation Wails API 在 internal/app/handlers.go（開啟儲存對話框）
-- [ ] T097 [US3] 新增匯出進度追蹤和日誌記錄
+- [X] T089 [P] [US3] 實作資料格式化器在 internal/exporter/formatter.go（將 Go 結構轉為 Excel 友善格式）
+- [X] T090 [US3] 實作 XLSX 匯出器在 internal/exporter/xlsx.go（使用 excelize streaming writer）
+- [X] T091 [US3] 實作「日誌條目」工作表生成在 internal/exporter/xlsx.go（包含所有欄位和標題）
+- [X] T092 [US3] 實作「統計資料」工作表生成在 internal/exporter/xlsx.go（Top 10 IP、Top 10 路徑、狀態碼）
+- [X] T093 [US3] 實作「機器人偵測」工作表生成在 internal/exporter/xlsx.go（IP、類型、信心分數）
+- [X] T094 [US3] 處理 Excel 行數限制（1,048,576 行，超過時截斷並警告）
+- [X] T095 [US3] 實作 ExportToExcel Wails API 在 internal/app/handlers.go（呼叫匯出器）
+- [X] T096 [US3] 實作 SelectSaveLocation Wails API 在 internal/app/handlers.go（開啟儲存對話框）
+- [X] T097 [US3] 新增匯出進度追蹤和日誌記錄
 
 ### 前端實作
 
-- [ ] T098 [P] [US3] 實作匯出按鈕在表格工具列和儀表板
-- [ ] T099 [P] [US3] 實作匯出進度對話框在 frontend/src/components/ExportProgress.tsx
-- [ ] T100 [US3] 實作匯出邏輯在 frontend/src/App.tsx（呼叫 SelectSaveLocation 和 ExportToExcel API）
-- [ ] T101 [US3] 實作匯出成功通知（顯示檔案路徑和大小）
-- [ ] T102 [US3] 實作匯出錯誤處理（磁碟空間不足、無寫入權限等）
-- [ ] T103 [US3] 新增繁體中文匯出相關訊息
+- [X] T098 [P] [US3] 實作匯出按鈕在表格工具列和儀表板
+- [X] T099 [P] [US3] 實作匯出進度對話框在 frontend/src/components/ExportProgress.tsx
+- [X] T100 [US3] 實作匯出邏輯在 frontend/src/App.tsx（呼叫 SelectSaveLocation 和 ExportToExcel API）
+- [X] T101 [US3] 實作匯出成功通知（顯示檔案路徑和大小）
+- [X] T102 [US3] 實作匯出錯誤處理（磁碟空間不足、無寫入權限等）
+- [X] T103 [US3] 新增繁體中文匯出相關訊息
 
 ### 整合與驗證
 

@@ -13,8 +13,12 @@ import {
   Button,
   Alert,
   CircularProgress,
+  Snackbar,
+  IconButton,
 } from '@mui/material'
 import FolderOpenIcon from '@mui/icons-material/FolderOpen'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import CloseIcon from '@mui/icons-material/Close'
 // 匯入 Wails 綁定的 API 和類型
 import * as AppAPI from '../wailsjs/wailsjs/go/app/App'
 import type { models } from '../wailsjs/wailsjs/go/models'
@@ -28,6 +32,7 @@ import LogTable from './components/LogTable'
 import ErrorSummary from './components/ErrorSummary'
 import ProgressIndicator from './components/ProgressIndicator'
 import Dashboard, { type Statistics } from './components/Dashboard'
+import ExportProgress from './components/ExportProgress'
 
 // 檔案資訊介面
 interface FileInfo {
@@ -48,6 +53,13 @@ function App() {
   const [currentSubTab, setCurrentSubTab] = useState(0)  // 二級標籤頁（Dashboard/日誌表格）
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // 匯出狀態
+  const [exporting, setExporting] = useState(false)
+  const [exportProgress, setExportProgress] = useState(0)
+  const [exportMessage, setExportMessage] = useState('')
+  const [exportWarnings, setExportWarnings] = useState<string[]>([])
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   // 檢查 Wails runtime 是否已載入
   useEffect(() => {
@@ -168,6 +180,102 @@ function App() {
     setCurrentTab(newValue)
   }
 
+  /**
+   * 處理匯出至 Excel
+   * 將當前檔案的分析結果匯出為 Excel 格式
+   */
+  const handleExport = async () => {
+    // 檢查是否有開啟的檔案
+    if (files.length === 0 || currentTab >= files.length) {
+      setError('請先開啟一個日誌檔案')
+      return
+    }
+
+    const currentFile = files[currentTab]
+    
+    // 檢查檔案是否載入完成
+    if (currentFile.isLoading) {
+      setError('檔案正在載入中，請稍後再試')
+      return
+    }
+
+    // 檢查是否有錯誤
+    if (currentFile.error) {
+      setError('無法匯出有錯誤的檔案')
+      return
+    }
+
+    try {
+      setExporting(true)
+      setExportProgress(0)
+      setExportMessage('準備匯出...')
+      setExportWarnings([])
+
+      // 步驟 1: 選擇儲存位置
+      setExportMessage('選擇儲存位置...')
+      const defaultFileName = currentFile.name.replace(/\.(log|txt)$/, '') + '.xlsx'
+      
+      const saveResponse = await AppAPI.SelectSaveLocation(defaultFileName)
+      
+      if (!saveResponse.success) {
+        if (saveResponse.errorMessage) {
+          setError(saveResponse.errorMessage)
+        }
+        // 使用者取消選擇
+        return
+      }
+
+      setExportProgress(10)
+      setExportMessage('開始匯出資料...')
+
+      // 步驟 2: 執行匯出
+      const exportResponse = await AppAPI.ExportToExcel({
+        filePath: currentFile.path,
+        savePath: saveResponse.savePath,
+      })
+
+      if (!exportResponse.success) {
+        setError(exportResponse.errorMessage || '匯出失敗')
+        return
+      }
+
+      // 顯示警告訊息（如果有）
+      if (exportResponse.warnings && exportResponse.warnings.length > 0) {
+        setExportWarnings(exportResponse.warnings)
+      }
+
+      setExportProgress(100)
+      setExportMessage('匯出完成！')
+
+      // 格式化檔案大小
+      const fileSizeStr = formatFileSize(exportResponse.fileSize)
+      
+      // 顯示成功訊息
+      setTimeout(() => {
+        setExporting(false)
+        setSuccessMessage(`已成功匯出至 ${exportResponse.exportPath} (${fileSizeStr})`)
+      }, 500)
+
+    } catch (err) {
+      console.error('匯出錯誤:', err)
+      setError(err instanceof Error ? err.message : '匯出過程中發生未知錯誤')
+    } finally {
+      if (!exporting) {
+        setExporting(false)
+      }
+    }
+  }
+
+  /**
+   * 格式化檔案大小
+   */
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(2)} MB`
+    return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`
+  }
+
   // 關閉分頁
   // TODO: 實作分頁關閉功能
   // const handleCloseTab = (index: number) => {
@@ -196,8 +304,51 @@ function App() {
           >
             開啟檔案
           </Button>
+          <Button
+            color="inherit"
+            startIcon={<FileDownloadIcon />}
+            onClick={handleExport}
+            disabled={loading || files.length === 0 || exporting}
+            sx={{ ml: 1 }}
+          >
+            匯出至 Excel
+          </Button>
         </Toolbar>
       </AppBar>
+
+      {/* 匯出進度對話框 */}
+      <ExportProgress
+        open={exporting}
+        progress={exportProgress}
+        message={exportMessage}
+        warnings={exportWarnings}
+      />
+
+      {/* 成功通知 */}
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={6000}
+        onClose={() => setSuccessMessage(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSuccessMessage(null)} 
+          severity="success" 
+          sx={{ width: '100%' }}
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={() => setSuccessMessage(null)}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
 
       {/* 錯誤提示 */}
       {error && (

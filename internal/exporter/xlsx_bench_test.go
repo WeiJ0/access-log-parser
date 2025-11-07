@@ -127,7 +127,7 @@ func BenchmarkWorksheetCreation(b *testing.B) {
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
 			tempFile := filepath.Join(b.TempDir(), "logs_only.xlsx")
-			err := exporter.createLogEntriesWorksheet(logs, tempFile)
+			err := exporter.exportLogEntriesOnly(logs, tempFile)
 			if err != nil {
 				b.Fatalf("日誌工作表創建失敗: %v", err)
 			}
@@ -138,7 +138,7 @@ func BenchmarkWorksheetCreation(b *testing.B) {
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
 			tempFile := filepath.Join(b.TempDir(), "stats_only.xlsx")
-			err := exporter.createStatisticsWorksheet(stats, tempFile)
+			err := exporter.exportStatisticsOnly(stats, tempFile)
 			if err != nil {
 				b.Fatalf("統計工作表創建失敗: %v", err)
 			}
@@ -149,7 +149,7 @@ func BenchmarkWorksheetCreation(b *testing.B) {
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
 			tempFile := filepath.Join(b.TempDir(), "bots_only.xlsx")
-			err := exporter.createBotDetectionWorksheet(logs, tempFile)
+			err := exporter.exportBotDetectionOnly(logs, tempFile)
 			if err != nil {
 				b.Fatalf("機器人偵測工作表創建失敗: %v", err)
 			}
