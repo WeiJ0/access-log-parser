@@ -1,0 +1,118 @@
+# Go 語言相關
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+go.work
+go.work.sum
+
+# Go 編譯產物
+/bin/
+# /pkg/ - 注意：pkg/ 在此專案中用於存放公共套件原始碼，不應忽略
+/build/bin/
+/build/
+
+# Wails 建置產物
+/frontend/dist/
+/frontend/build/
+/frontend/node_modules/
+/wailsjs/
+
+# Wails 生成的綁定檔案（保留結構）
+frontend/wailsjs/go/
+frontend/wailsjs/runtime/
+
+# Node.js / TypeScript 前端
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+dist/
+dist-ssr/
+*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# 環境變數和敏感資訊
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+*.key
+*.pem
+*.crt
+secrets/
+
+# 測試覆蓋率報告
+coverage/
+*.coverprofile
+*.cover
+*.out
+coverage.out
+coverage.html
+
+# IDE 和編輯器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.iml
+*.ipr
+*.iws
+
+# 日誌檔案
+*.log
+logs/
+log/
+
+# 臨時檔案
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# 作業系統生成檔案
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# 測試資料（保留 testdata/ 目錄結構，但忽略大檔案）
+testdata/*.log
+testdata/*.txt
+!testdata/valid.log
+!testdata/invalid.log
+
+# 應用程式產生的輸出
+*.xlsx
+exports/
+output/
+
+# Wails 特定
+.wails/
+wails.json.backup
+
+# 打包和部署
+*.tar.gz
+*.zip
+*.rar
+*.7z
+dist-packages/
+release/
