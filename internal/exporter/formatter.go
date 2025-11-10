@@ -13,13 +13,13 @@ import (
 // Formatter 負責將 Go 資料結構轉換為 Excel 友善的格式
 // 提供一致的資料格式化和表格結構
 type Formatter struct {
-	timeFormat   string             // 時間格式化字串
+	timeFormat string // 時間格式化字串
 }
 
 // NewFormatter 建立新的格式化器實例
 func NewFormatter() *Formatter {
 	return &Formatter{
-		timeFormat:  "2006-01-02 15:04:05", // 標準時間格式
+		timeFormat: "2006-01-02 15:04:05", // 標準時間格式
 	}
 }
 
@@ -38,18 +38,18 @@ func (f *Formatter) FormatLogEntries(logs []*models.LogEntry) [][]string {
 		"來源頁面",
 		"User Agent",
 	}
-	
+
 	// 初始化結果陣列
 	result := make([][]string, 0, len(logs)+1)
 	result = append(result, headers)
-	
+
 	// 處理每筆日誌條目
 	for _, log := range logs {
 		// 跳過 nil 條目
 		if log == nil {
 			continue
 		}
-		
+
 		row := []string{
 			log.IP,
 			f.formatTime(log.Timestamp),
@@ -61,10 +61,10 @@ func (f *Formatter) FormatLogEntries(logs []*models.LogEntry) [][]string {
 			f.formatReferer(log.Referer),
 			log.UserAgent,
 		}
-		
+
 		result = append(result, row)
 	}
-	
+
 	return result
 }
 
@@ -74,9 +74,9 @@ func (f *Formatter) FormatStatistics(stats *models.Statistics) [][]string {
 	if stats == nil {
 		return [][]string{{"統計項目", "數值"}}
 	}
-	
+
 	result := make([][]string, 0)
-	
+
 	// 基本統計資料區塊
 	result = append(result, []string{"===== 基本統計 ====="})
 	result = append(result, []string{"統計項目", "數值"})
@@ -89,7 +89,7 @@ func (f *Formatter) FormatStatistics(stats *models.Statistics) [][]string {
 	result = append(result, []string{"平均回應大小 (位元組)", fmt.Sprintf("%.2f", stats.AvgResponseSize)})
 	result = append(result, []string{"最小回應大小", strconv.FormatInt(stats.MinResponseSize, 10)})
 	result = append(result, []string{"最大回應大小", strconv.FormatInt(stats.MaxResponseSize, 10)})
-	
+
 	// 錯誤統計區塊
 	result = append(result, []string{""}) // 空行分隔
 	result = append(result, []string{"===== 錯誤統計 ====="})
@@ -97,19 +97,19 @@ func (f *Formatter) FormatStatistics(stats *models.Statistics) [][]string {
 	result = append(result, []string{"客戶端錯誤 (4xx)", strconv.FormatInt(stats.ClientErrorCount, 10)})
 	result = append(result, []string{"伺服器錯誤 (5xx)", strconv.FormatInt(stats.ServerErrorCount, 10)})
 	result = append(result, []string{"錯誤率 (%)", fmt.Sprintf("%.2f", stats.ErrorRate)})
-	
+
 	// 狀態碼分布
 	result = append(result, []string{""})
 	result = append(result, []string{"===== 狀態碼分布 ====="})
 	result = append(result, []string{"狀態碼", "次數"})
-	
+
 	// 排序狀態碼
 	var statusCodes []int
 	for code := range stats.StatusCodeDist {
 		statusCodes = append(statusCodes, code)
 	}
 	sort.Ints(statusCodes)
-	
+
 	for _, code := range statusCodes {
 		count := stats.StatusCodeDist[code]
 		result = append(result, []string{
@@ -117,34 +117,34 @@ func (f *Formatter) FormatStatistics(stats *models.Statistics) [][]string {
 			strconv.FormatInt(count, 10),
 		})
 	}
-	
+
 	// 狀態類別分布
 	result = append(result, []string{""})
 	result = append(result, []string{"===== 狀態類別分布 ====="})
 	result = append(result, []string{"類別", "次數"})
-	
+
 	// 排序狀態類別
 	var categories []string
 	for cat := range stats.StatusCatDist {
 		categories = append(categories, cat)
 	}
 	sort.Strings(categories)
-	
+
 	for _, cat := range categories {
 		count := stats.StatusCatDist[cat]
 		result = append(result, []string{cat, strconv.FormatInt(count, 10)})
 	}
-	
+
 	// Top IPs
 	result = append(result, []string{""})
 	result = append(result, []string{"===== Top 10 IP 位址 ====="})
 	result = append(result, []string{"IP位址", "請求次數", "總傳輸量", "錯誤次數", "錯誤率(%)", "唯一URL數"})
-	
+
 	limit := len(stats.TopIPs)
 	if limit > 10 {
 		limit = 10
 	}
-	
+
 	for i := 0; i < limit; i++ {
 		ip := stats.TopIPs[i]
 		result = append(result, []string{
@@ -156,17 +156,17 @@ func (f *Formatter) FormatStatistics(stats *models.Statistics) [][]string {
 			strconv.Itoa(ip.UniqueURLs),
 		})
 	}
-	
+
 	// Top URLs
 	result = append(result, []string{""})
 	result = append(result, []string{"===== Top 10 URL 路徑 ====="})
 	result = append(result, []string{"URL", "請求次數", "總傳輸量", "錯誤次數", "錯誤率(%)", "平均大小"})
-	
+
 	limit = len(stats.TopURLs)
 	if limit > 10 {
 		limit = 10
 	}
-	
+
 	for i := 0; i < limit; i++ {
 		url := stats.TopURLs[i]
 		result = append(result, []string{
@@ -178,26 +178,26 @@ func (f *Formatter) FormatStatistics(stats *models.Statistics) [][]string {
 			fmt.Sprintf("%.2f", url.AvgBytes),
 		})
 	}
-	
+
 	// HTTP 方法分布
 	if len(stats.MethodDist) > 0 {
 		result = append(result, []string{""})
 		result = append(result, []string{"===== HTTP 方法分布 ====="})
 		result = append(result, []string{"方法", "次數"})
-		
+
 		// 排序方法
 		var methods []string
 		for method := range stats.MethodDist {
 			methods = append(methods, method)
 		}
 		sort.Strings(methods)
-		
+
 		for _, method := range methods {
 			count := stats.MethodDist[method]
 			result = append(result, []string{method, strconv.FormatInt(count, 10)})
 		}
 	}
-	
+
 	return result
 }
 
@@ -207,22 +207,22 @@ func (f *Formatter) FormatBotDetection(logs []*models.LogEntry) [][]string {
 	// 建立標題行
 	headers := []string{"IP位址", "機器人類型", "信心分數", "請求次數"}
 	result := [][]string{headers}
-	
+
 	if logs == nil || len(logs) == 0 {
 		return result
 	}
-	
+
 	// 統計每個IP的機器人活動
 	botIPs := make(map[string]*BotIPStat)
-	
+
 	for _, log := range logs {
 		if log == nil {
 			continue
 		}
-		
+
 		// 使用內建的機器人偵測邏輯
 		isBot, botType := f.detectBot(log.UserAgent)
-		
+
 		if isBot {
 			if stat, exists := botIPs[log.IP]; exists {
 				stat.Count++
@@ -239,17 +239,17 @@ func (f *Formatter) FormatBotDetection(logs []*models.LogEntry) [][]string {
 			}
 		}
 	}
-	
+
 	// 轉換為切片並排序（按請求次數降序）
 	var botList []*BotIPStat
 	for _, stat := range botIPs {
 		botList = append(botList, stat)
 	}
-	
+
 	sort.Slice(botList, func(i, j int) bool {
 		return botList[i].Count > botList[j].Count
 	})
-	
+
 	// 格式化為表格行
 	for _, bot := range botList {
 		confidence := f.calculateConfidence(bot.BotType, bot.Count)
@@ -261,7 +261,7 @@ func (f *Formatter) FormatBotDetection(logs []*models.LogEntry) [][]string {
 		}
 		result = append(result, row)
 	}
-	
+
 	return result
 }
 
@@ -292,14 +292,14 @@ func (f *Formatter) formatReferer(referer string) string {
 // 特異性越高的類型越具體，優先度越高
 func (f *Formatter) getBotTypeSpecificity(botType string) int {
 	specificity := map[string]int{
-		"搜尋引擎":  5,
-		"社交媒體":  4,
+		"搜尋引擎":   5,
+		"社交媒體":   4,
 		"SEO 工具": 4,
-		"監控工具":  3,
-		"安全掃描":  3,
-		"爬蟲":    1, // 最通用的類別
+		"監控工具":   3,
+		"安全掃描":   3,
+		"爬蟲":     1, // 最通用的類別
 	}
-	
+
 	if score, exists := specificity[botType]; exists {
 		return score
 	}
@@ -311,9 +311,9 @@ func (f *Formatter) detectBot(userAgent string) (bool, string) {
 	if userAgent == "" || userAgent == "-" {
 		return false, ""
 	}
-	
+
 	lowerUA := strings.ToLower(userAgent)
-	
+
 	// 搜尋引擎機器人
 	searchEnginePatterns := []string{
 		"googlebot", "bingbot", "slurp", "duckduckbot",
@@ -324,7 +324,7 @@ func (f *Formatter) detectBot(userAgent string) (bool, string) {
 			return true, "搜尋引擎"
 		}
 	}
-	
+
 	// 社交媒體機器人
 	socialMediaPatterns := []string{
 		"facebookexternalhit", "twitterbot", "linkedinbot",
@@ -336,7 +336,7 @@ func (f *Formatter) detectBot(userAgent string) (bool, string) {
 			return true, "社交媒體"
 		}
 	}
-	
+
 	// 監控工具
 	monitoringPatterns := []string{
 		"pingdom", "uptimerobot", "statuscake", "monitor",
@@ -347,7 +347,7 @@ func (f *Formatter) detectBot(userAgent string) (bool, string) {
 			return true, "監控工具"
 		}
 	}
-	
+
 	// 通用爬蟲關鍵字
 	crawlerPatterns := []string{
 		"bot", "crawler", "spider", "scraper", "scraping",
@@ -359,13 +359,13 @@ func (f *Formatter) detectBot(userAgent string) (bool, string) {
 			return true, "爬蟲"
 		}
 	}
-	
+
 	return false, ""
 }
 func (f *Formatter) calculateConfidence(botType string, requestCount int) string {
 	// 基於機器人類型的基礎信心分數
 	baseScore := f.getBotTypeSpecificity(botType)
-	
+
 	// 基於請求次數調整信心分數
 	// 機器人通常會有較高的請求頻率
 	var frequencyScore int
@@ -378,9 +378,9 @@ func (f *Formatter) calculateConfidence(botType string, requestCount int) string
 	} else {
 		frequencyScore = 0
 	}
-	
+
 	totalScore := baseScore + frequencyScore
-	
+
 	// 轉換為信心等級
 	if totalScore >= 7 {
 		return "極高"
@@ -433,7 +433,7 @@ func (f *Formatter) EscapeCSVField(field string) string {
 // 檢查是否有必要的欄位缺失或格式錯誤
 func (f *Formatter) ValidateData(logs []*models.LogEntry, stats *models.Statistics) []string {
 	var warnings []string
-	
+
 	// 檢查日誌條目
 	if logs == nil {
 		warnings = append(warnings, "日誌條目為空")
@@ -443,7 +443,7 @@ func (f *Formatter) ValidateData(logs []*models.LogEntry, stats *models.Statisti
 				warnings = append(warnings, fmt.Sprintf("第 %d 筆日誌條目為 nil", i+1))
 				continue
 			}
-			
+
 			// 檢查必要欄位
 			if log.IP == "" {
 				warnings = append(warnings, fmt.Sprintf("第 %d 筆記錄缺少IP位址", i+1))
@@ -456,7 +456,7 @@ func (f *Formatter) ValidateData(logs []*models.LogEntry, stats *models.Statisti
 			}
 		}
 	}
-	
+
 	// 檢查統計資料
 	if stats == nil {
 		warnings = append(warnings, "統計資料為空")
@@ -468,6 +468,6 @@ func (f *Formatter) ValidateData(logs []*models.LogEntry, stats *models.Statisti
 			warnings = append(warnings, fmt.Sprintf("日誌條目數量 (%d) 與統計中的總請求數 (%d) 不符", len(logs), stats.TotalRequests))
 		}
 	}
-	
+
 	return warnings
 }

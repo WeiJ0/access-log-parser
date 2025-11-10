@@ -3,6 +3,8 @@
 import {app} from '../models';
 import {models} from '../models';
 
+export function ClearRecentFiles():Promise<app.ClearRecentFilesResponse>;
+
 export function CloseFile(arg1:string):Promise<boolean>;
 
 export function ExportToExcel(arg1:app.ExportToExcelRequest):Promise<app.ExportToExcelResponse>;
@@ -12,6 +14,8 @@ export function GetActiveFile():Promise<string>;
 export function GetFileData(arg1:string):Promise<models.LogFile>;
 
 export function GetOpenFiles():Promise<Array<string>>;
+
+export function GetRecentFiles():Promise<app.GetRecentFilesResponse>;
 
 export function ParseFile(arg1:app.ParseFileRequest):Promise<app.ParseFileResponse>;
 

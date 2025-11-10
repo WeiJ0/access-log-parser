@@ -139,9 +139,9 @@ func MeasurePerformance(fn func()) int64 {
 func MeasureMemory(fn func()) uint64 {
 	var memBefore, memAfter runtime.MemStats
 	runtime.ReadMemStats(&memBefore)
-	
+
 	fn()
-	
+
 	runtime.ReadMemStats(&memAfter)
 	return memAfter.Alloc - memBefore.Alloc
 }

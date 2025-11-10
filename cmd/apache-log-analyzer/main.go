@@ -2,13 +2,13 @@ package main
 
 import (
 	"os"
-	
+
+	"access-log-analyzer/internal/app"
+	"access-log-analyzer/pkg/logger"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
-	"access-log-analyzer/internal/app"
-	"access-log-analyzer/pkg/logger"
 )
 
 // main 是應用程式的入口點
@@ -17,7 +17,7 @@ func main() {
 	// 初始化全域 logger
 	logger.Init()
 	log := logger.Get()
-	
+
 	log.Info().Msg("Apache Log Analyzer 正在啟動...")
 
 	// 建立應用程式實例

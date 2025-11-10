@@ -44,20 +44,20 @@ func TestFormatLogEntries(t *testing.T) {
 			LineNumber:    2,
 		},
 	}
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatLogEntries(logs)
-	
+
 	// 檢查返回的資料結構
 	require.Len(t, result, 3, "應該有 3 行（1 標題 + 2 資料）")
-	
+
 	// 檢查標題行
 	expectedHeaders := []string{
 		"IP位址", "時間戳", "HTTP方法", "URL", "協定",
 		"狀態碼", "回應大小", "來源頁面", "User Agent",
 	}
 	assert.Equal(t, expectedHeaders, result[0], "標題行應該正確")
-	
+
 	// 檢查第一筆資料
 	expectedFirstRow := []string{
 		"192.168.1.100",
@@ -71,7 +71,7 @@ func TestFormatLogEntries(t *testing.T) {
 		"Mozilla/5.0 (Windows NT 10.0)",
 	}
 	assert.Equal(t, expectedFirstRow, result[1], "第一行資料應該正確")
-	
+
 	// 檢查第二筆資料
 	expectedSecondRow := []string{
 		"192.168.1.101",
@@ -90,13 +90,13 @@ func TestFormatLogEntries(t *testing.T) {
 // TestFormatLogEntriesEmpty 測試空日誌條目的格式化
 func TestFormatLogEntriesEmpty(t *testing.T) {
 	var logs []*models.LogEntry
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatLogEntries(logs)
-	
+
 	// 即使沒有資料，也應該有標題行
 	require.Len(t, result, 1, "應該有 1 行（僅標題）")
-	
+
 	expectedHeaders := []string{
 		"IP位址", "時間戳", "HTTP方法", "URL", "協定",
 		"狀態碼", "回應大小", "來源頁面", "User Agent",
@@ -135,13 +135,13 @@ func TestFormatStatistics(t *testing.T) {
 			{URL: "/api/users", Count: 150, TotalBytes: 153600},
 		},
 	}
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatStatistics(stats)
-	
+
 	// 檢查返回的資料結構不為空
 	require.Greater(t, len(result), 0, "格式化的統計資料應該不為空")
-	
+
 	// 檢查基本統計資料是否包含
 	found := false
 	for _, row := range result {
@@ -151,7 +151,7 @@ func TestFormatStatistics(t *testing.T) {
 		}
 	}
 	assert.True(t, found, "應該包含總請求數統計")
-	
+
 	// 檢查是否包含 Top IPs 資料
 	foundTopIP := false
 	for _, row := range result {
@@ -187,38 +187,38 @@ func TestFormatBotDetection(t *testing.T) {
 			LineNumber: 4,
 		},
 	}
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatBotDetection(logs)
-	
+
 	// 檢查返回的資料結構
 	require.Greater(t, len(result), 1, "應該有標題行和資料行")
-	
+
 	// 檢查標題行
 	expectedHeaders := []string{"IP位址", "機器人類型", "信心分數", "請求次數"}
 	assert.Equal(t, expectedHeaders, result[0], "標題行應該正確")
-	
+
 	// 檢查是否偵測到 Googlebot
 	foundGooglebot := false
 	foundFacebook := false
-	
+
 	for i := 1; i < len(result); i++ {
 		row := result[i]
 		require.Len(t, row, 4, "每行資料應該有 4 個欄位")
-		
+
 		if row[0] == "192.168.1.100" && row[1] == "搜尋引擎" {
 			foundGooglebot = true
 			assert.Equal(t, "高", row[2], "Googlebot 信心分數應該是高")
 			assert.Equal(t, "2", row[3], "Googlebot 請求次數應該是 2")
 		}
-		
+
 		if row[0] == "192.168.1.102" && row[1] == "社交媒體" {
 			foundFacebook = true
 			// 社交媒體機器人，請求次數只有 1，信心分數應該是「中」（特異性 4 + 頻率 0 = 4）
 			assert.Equal(t, "中", row[2], "Facebook 信心分數應該是中（單次請求）")
 		}
 	}
-	
+
 	assert.True(t, foundGooglebot, "應該偵測到 Googlebot")
 	assert.True(t, foundFacebook, "應該偵測到 Facebook 機器人")
 }
@@ -237,13 +237,13 @@ func TestFormatBotDetectionNoBots(t *testing.T) {
 			LineNumber: 2,
 		},
 	}
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatBotDetection(logs)
-	
+
 	// 即使沒有機器人，也應該有標題行
 	require.Len(t, result, 1, "應該只有標題行")
-	
+
 	expectedHeaders := []string{"IP位址", "機器人類型", "信心分數", "請求次數"}
 	assert.Equal(t, expectedHeaders, result[0], "標題行應該正確")
 }
@@ -252,20 +252,20 @@ func TestFormatBotDetectionNoBots(t *testing.T) {
 func TestTimeFormatting(t *testing.T) {
 	// 測試不同時區的時間
 	utcTime := time.Date(2024, 1, 1, 15, 30, 45, 0, time.UTC)
-	
+
 	logs := []*models.LogEntry{
 		{
-			IP:        "192.168.1.100",
-			Timestamp: utcTime,
-			Method:    "GET",
-			URL:       "/test",
+			IP:         "192.168.1.100",
+			Timestamp:  utcTime,
+			Method:     "GET",
+			URL:        "/test",
 			StatusCode: 200,
 		},
 	}
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatLogEntries(logs)
-	
+
 	// 檢查時間格式
 	require.Len(t, result, 2, "應該有標題和一行資料")
 	timeStr := result[1][1] // 時間戳欄位
@@ -285,12 +285,12 @@ func TestSpecialCharacterHandling(t *testing.T) {
 			Timestamp:  time.Now(),
 		},
 	}
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatLogEntries(logs)
-	
+
 	require.Len(t, result, 2, "應該有標題和一行資料")
-	
+
 	// 檢查特殊字元是否正確處理
 	dataRow := result[1]
 	assert.Equal(t, "/path with spaces", dataRow[3], "URL 中的空格應該保留")
@@ -303,7 +303,7 @@ func TestLargeDataFormatting(t *testing.T) {
 	// 創建大量測試資料
 	count := 10000
 	logs := make([]*models.LogEntry, count)
-	
+
 	for i := 0; i < count; i++ {
 		logs[i] = &models.LogEntry{
 			IP:         "192.168.1.100",
@@ -313,13 +313,13 @@ func TestLargeDataFormatting(t *testing.T) {
 			StatusCode: 200,
 		}
 	}
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatLogEntries(logs)
-	
+
 	// 檢查結果數量
 	assert.Len(t, result, count+1, "應該有正確數量的資料行（包含標題）")
-	
+
 	// 檢查標題行
 	expectedHeaders := []string{
 		"IP位址", "時間戳", "HTTP方法", "URL", "協定",
@@ -331,11 +331,11 @@ func TestLargeDataFormatting(t *testing.T) {
 // TestNilDataHandling 測試 nil 資料處理
 func TestNilDataHandling(t *testing.T) {
 	formatter := NewFormatter()
-	
+
 	// 測試 nil 日誌條目列表
 	result := formatter.FormatLogEntries(nil)
 	require.Len(t, result, 1, "nil 列表應該只返回標題行")
-	
+
 	// 測試包含 nil 條目的列表
 	logs := []*models.LogEntry{
 		{
@@ -352,7 +352,7 @@ func TestNilDataHandling(t *testing.T) {
 			Timestamp:  time.Now(),
 		},
 	}
-	
+
 	result = formatter.FormatLogEntries(logs)
 	// 應該跳過 nil 條目，只處理有效的條目
 	assert.Len(t, result, 3, "應該跳過 nil 條目，只處理有效條目")
@@ -366,16 +366,16 @@ func TestZeroValueHandling(t *testing.T) {
 			Timestamp:     time.Time{}, // 零值時間
 			Method:        "",          // 空字串
 			URL:           "",
-			StatusCode:    0,           // 零值狀態碼
+			StatusCode:    0, // 零值狀態碼
 			ResponseBytes: 0,
 		},
 	}
-	
+
 	formatter := NewFormatter()
 	result := formatter.FormatLogEntries(logs)
-	
+
 	require.Len(t, result, 2, "應該有標題和一行資料")
-	
+
 	dataRow := result[1]
 	assert.Equal(t, "192.168.1.100", dataRow[0], "IP 應該正確")
 	assert.Equal(t, "0001-01-01 00:00:00", dataRow[1], "零值時間應該有默認格式")

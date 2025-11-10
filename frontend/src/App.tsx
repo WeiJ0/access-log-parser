@@ -35,6 +35,7 @@ import Dashboard, { type Statistics } from './components/Dashboard'
 import ExportProgress from './components/ExportProgress'
 import SearchBar from './components/SearchBar'
 import FilterPanel from './components/FilterPanel'
+import RecentFiles from './components/RecentFiles'
 import { SearchService, SearchCriteria } from './services/searchService'
 import { FilterService, FilterCriteria } from './services/filterService'
 
@@ -170,6 +171,87 @@ function App() {
             ...f,
             entries: entries,
             filteredEntries: entries,  // User Story 4: 初始顯示所有記錄
+            errorCount: logFile.errorLines || 0,
+            errorSamples: result.errorSamples || [],
+            statistics: logFile.statistics || null,
+            statTime: logFile.statTime || 0,
+            isLoading: false,
+            error: null,
+          }
+        }
+        return f
+      })
+      
+      setFiles(updatedFiles)
+      setLoading(false)
+
+    } catch (err) {
+      console.error('載入檔案失敗:', err)
+      const errorMsg = err instanceof Error ? err.message : String(err)
+      setError(`錯誤: ${errorMsg}`)
+      setLoading(false)
+      
+      // 移除載入失敗的檔案
+      setFiles(files.filter(f => !f.isLoading))
+    }
+  }
+
+  // 從最近檔案列表開啟檔案
+  const handleOpenRecentFile = async (filePath: string) => {
+    try {
+      setError(null)
+      
+      // 檢查檔案是否已經開啟
+      const existingIndex = files.findIndex(f => f.path === filePath)
+      if (existingIndex >= 0) {
+        setCurrentTab(existingIndex)
+        return
+      }
+
+      setLoading(true)
+
+      // 解析檔案
+      const fileName = filePath.split(/[/\\]/).pop() || filePath
+      
+      // 新增檔案到列表（載入中狀態）
+      const newFile: FileInfo = {
+        path: filePath,
+        name: fileName,
+        entries: [],
+        filteredEntries: [],
+        errorCount: 0,
+        errorSamples: [],
+        statistics: null,
+        statTime: 0,
+        isLoading: true,
+        error: null,
+        searchCriteria: null,
+        filterCriteria: null,
+        showFilterPanel: false,
+      }
+      
+      const newFiles = [...files, newFile]
+      setFiles(newFiles)
+      setCurrentTab(newFiles.length - 1)
+
+      // 呼叫 Wails API 解析檔案
+      const result = await AppAPI.ParseFile({ filePath })
+      
+      // 檢查解析是否成功
+      if (!result.success || !result.logFile) {
+        throw new Error(result.errorMessage || '解析檔案失敗')
+      }
+      
+      const logFile = result.logFile
+      
+      // 更新檔案資訊
+      const updatedFiles = newFiles.map((f, i) => {
+        if (i === newFiles.length - 1) {
+          const entries = logFile.entries || []
+          return {
+            ...f,
+            entries: entries,
+            filteredEntries: entries,
             errorCount: logFile.errorLines || 0,
             errorSamples: result.errorSamples || [],
             statistics: logFile.statistics || null,
@@ -457,6 +539,7 @@ function App() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Apache Access Log Analyzer
           </Typography>
+          <RecentFiles onFileSelect={handleOpenRecentFile} />
           <Button
             color="inherit"
             startIcon={<FolderOpenIcon />}

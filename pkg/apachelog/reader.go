@@ -22,12 +22,12 @@ func NewReader(filepath string) (*Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	scanner := bufio.NewScanner(file)
 	// 設定最大單行大小為 1MB（處理超長 log 行）
 	buf := make([]byte, 0, 16*1024) // 16KB 初始緩衝區
 	scanner.Buffer(buf, 1024*1024)  // 最大 1MB
-	
+
 	return &Reader{
 		file:    file,
 		scanner: scanner,
@@ -41,7 +41,7 @@ func (r *Reader) ReadLine() (lineNum int, line string, hasMore bool) {
 	if r.err != nil {
 		return 0, "", false
 	}
-	
+
 	if !r.scanner.Scan() {
 		r.err = r.scanner.Err()
 		if r.err == nil {
@@ -49,7 +49,7 @@ func (r *Reader) ReadLine() (lineNum int, line string, hasMore bool) {
 		}
 		return 0, "", false
 	}
-	
+
 	r.lineNum++
 	return r.lineNum, r.scanner.Text(), true
 }
@@ -84,17 +84,17 @@ func (r *Reader) Reset() error {
 	if r.file == nil {
 		return nil
 	}
-	
+
 	_, err := r.file.Seek(0, 0)
 	if err != nil {
 		return err
 	}
-	
+
 	r.scanner = bufio.NewScanner(r.file)
 	buf := make([]byte, 0, 16*1024)
 	r.scanner.Buffer(buf, 1024*1024)
 	r.lineNum = 0
 	r.err = nil
-	
+
 	return nil
 }

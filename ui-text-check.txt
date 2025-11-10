@@ -1,0 +1,163 @@
+﻿
+Path                                                                                  Line                                                                         
+----                                                                                  ----                                                                         
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                     <AppBar position="static">                                             
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>     
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                           color="inherit"                                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                           color="inherit"                                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                         severity="success"                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                             size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                             aria-label="close"                                             
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                             color="inherit"                                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                             <CloseIcon fontSize="small" />                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                       <Alert severity="error" onClose={() => setError(null)} sx={{ m: 2 }}>
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                       <Alert severity="warning" sx={{ m: 2 }}>                             
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                         <Typography variant="body2">                                       
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                         <Typography variant="caption" component="pre" sx={{ mt: 1 }}>      
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                           <Typography variant="body1" color="text.secondary" sx={{ mb: 4...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                             variant="contained"                                            
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                             size="large"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                               <Alert severity="error">{file.error}</Alert>                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\App.tsx                                                   <Typography variant="body2" color="text.secondary">      
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                       <SmartToyIcon color="action" />                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                         <Typography variant="body2" color="text.secondary">            
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                       <PersonIcon color="primary" />                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                         <Typography variant="body2" color="text.secondary">            
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                           <Typography variant="caption" sx={{ color: 'white', fontWe...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                           <Typography variant="caption" sx={{ color: 'white', fontWe...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                     <Alert severity="warning" sx={{ mb: 2 }}>                          
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                     <Typography variant="subtitle2" gutterBottom>                      
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                       <Table size="small">                                             
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                             <TableCell align="right">請求次數</TableCell>                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                             <TableCell align="right">百分比</TableCell>                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                                   variant="body2"                                      
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                               <TableCell align="right">                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                               <TableCell align="right">                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                                   <Typography variant="body2">                         
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                                     variant="determinate"                              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\BotDetection.tsx                   <Typography variant="body2" color="text.secondary" sx={{ textAlign...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\Dashboard.tsx                      <Typography variant="body1" color="text.secondary">                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\Dashboard.tsx                          <Typography variant="body2" color="text.secondary">              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\Dashboard.tsx                          <Typography variant="body2" color="text.secondary">              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\Dashboard.tsx                          <Typography variant="body2" color="text.secondary">              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\Dashboard.tsx                          <Typography variant="body2" color="text.secondary">              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                     aria-controls="error-summary-content"                              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                     id="error-summary-header"                                          
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                       <ErrorOutlineIcon color="warning" />                             
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                     <Alert severity="warning" icon={false}>                            
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                       <Typography variant="body2" color="text.secondary" sx={{ mb: 2...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                                     variant="body2"                                    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                                     component="pre"                                    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                           variant="body2"                                              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                           color="text.secondary"                                       
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                         <Alert severity="info" sx={{ mt: 2 }}>                         
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ErrorSummary.tsx                           <Typography variant="body2">                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ExportProgress.tsx                       variant="determinate"                                          
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ExportProgress.tsx                       variant="body2"                                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ExportProgress.tsx                       color="text.secondary"                                         
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ExportProgress.tsx                       align="center"                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ExportProgress.tsx                   <Typography variant="body1" sx={{ mb: 2 }}>                        
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ExportProgress.tsx                     <Alert severity="warning" sx={{ mt: 2 }}>                        
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ExportProgress.tsx                       <Typography variant="subtitle2" gutterBottom>                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ExportProgress.tsx                               <WarningIcon fontSize="small" />                       
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                      size="small"                                                       
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          color="primary"                                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                      <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2 }}> 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                            type="number"                                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                            size="small"                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                            type="number"                                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                            size="small"                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          <Typography variant="body2" color="text.secondary" sx={{ mb:...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                      <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2 }}> 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          type="datetime-local"                                          
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          type="datetime-local"                                          
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          color="primary"                                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          label="最小值 (bytes)"                                            
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          type="number"                                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          label="最大值 (bytes)"                                            
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          type="number"                                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                          size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                      variant="contained"                                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\FilterPanel.tsx                      <Typography variant="body2" color="text.secondary">                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\LogTable.tsx                     className="ag-theme-material"                                          
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\LogTable.tsx                       rowSelection="multiple"                                              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ProgressIndicator.tsx              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ProgressIndicator.tsx                  <LinearProgress variant="determinate" value={progress} />        
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ProgressIndicator.tsx                    variant="caption"                                              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ProgressIndicator.tsx                    color="text.secondary"                                         
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ProgressIndicator.tsx            <Typography variant="body1" color="text.secondary">                    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\ProgressIndicator.tsx              <Typography variant="caption" color="text.secondary">                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                      color="inherit"                                                    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                      aria-haspopup="true"                                               
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                    id="recent-files-menu"                                               
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                      <Typography variant="subtitle2" color="text.secondary">            
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                          <IconButton size="small" onClick={handleClear}>                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                            <ClearIcon fontSize="small" />                               
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                              <Box component="span">                                     
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                                <Typography variant="caption" display="block">           
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\RecentFiles.tsx                                <Typography variant="caption" color="text.secondary">    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                        variant="outlined"                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                        size="small"                                                       
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                            <InputAdornment position="start">                              
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                            <InputAdornment position="end">                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                                  size="small"                                             
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                                  edge="end"                                               
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                                    size="small"                                           
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                                    edge="end"                                             
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                        direction="row"                                                    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                        alignItems="center"                                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                        flexWrap="wrap"                                                    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                            size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                            size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                            label="URL 路徑"                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                            size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                            label="User-Agent"                                             
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                            size="small"                                                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\SearchBar.tsx                              size="small"                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx         <Typography variant="body2" color="text.secondary">                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx               <Typography variant="caption" color="text.secondary">成功 (2xx...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx               <Typography variant="caption" color="text.secondary">重新導向 (3...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx               <Typography variant="caption" color="text.secondary">客戶端錯誤 (...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx               <Typography variant="caption" color="text.secondary">伺服器錯誤 (...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>     
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx         <Table size="small">                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx               <TableCell align="right">次數</TableCell>                        
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx               <TableCell align="right">百分比</TableCell>                       
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx                     <Typography variant="body2" sx={{ fontFamily: 'monospa...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx                       size="small"                                           
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx                   <TableCell align="right">                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx                   <TableCell align="right">                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\StatusCodeDistribution.tsx                         variant="determinate"                                
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TabPanel.tsx                     role="tabpanel"                                                        
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopIPsList.tsx                     <Typography variant="body2" color="text.secondary">                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopIPsList.tsx                     <Table size="small">                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopIPsList.tsx                           <TableCell align="right">請求次數</TableCell>                      
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopIPsList.tsx                           <TableCell align="right">流量 (MB)</TableCell>                   
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopIPsList.tsx                               <Typography variant="body2" sx={{ fontFamily: 'monospace...
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopIPsList.tsx                             <TableCell align="right">                                    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopIPsList.tsx                             <TableCell align="right">                                    
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                   <Typography variant="body2" color="text.secondary">                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                   <Table size="small">                                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                         <TableCell align="right">請求次數</TableCell>                      
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                         <TableCell align="right">平均回應 (KB)</TableCell>                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                         <TableCell align="center">錯誤率</TableCell>                      
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                                 variant="body2"                                        
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                             <TableCell align="right">                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                             <TableCell align="right">                                  
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                             <TableCell align="center">                                 
+D:\Aiden\11 - Go\access-log-parser\frontend\src\components\TopPathsList.tsx                                   size="small"                                         
+
+

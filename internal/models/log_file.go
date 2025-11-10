@@ -8,26 +8,26 @@ import (
 // 包含所有日誌記錄和相關元資料
 type LogFile struct {
 	// 檔案資訊
-	Path         string    `json:"path"`         // 檔案完整路徑
-	Name         string    `json:"name"`         // 檔案名稱
-	Size         int64     `json:"size"`         // 檔案大小（位元組）
-	LoadedAt     time.Time `json:"loadedAt"`     // 載入時間
-	
+	Path     string    `json:"path"`     // 檔案完整路徑
+	Name     string    `json:"name"`     // 檔案名稱
+	Size     int64     `json:"size"`     // 檔案大小（位元組）
+	LoadedAt time.Time `json:"loadedAt"` // 載入時間
+
 	// 解析統計
-	TotalLines   int       `json:"totalLines"`   // 總行數
-	ParsedLines  int       `json:"parsedLines"`  // 成功解析的行數
-	ErrorLines   int       `json:"errorLines"`   // 解析失敗的行數
-	
+	TotalLines  int `json:"totalLines"`  // 總行數
+	ParsedLines int `json:"parsedLines"` // 成功解析的行數
+	ErrorLines  int `json:"errorLines"`  // 解析失敗的行數
+
 	// 日誌資料
-	Entries      []LogEntry `json:"entries"`     // 所有日誌記錄
-	
+	Entries []LogEntry `json:"entries"` // 所有日誌記錄
+
 	// 統計資訊（User Story 2）
-	Statistics   interface{} `json:"statistics"`  // 統計分析結果
-	
+	Statistics interface{} `json:"statistics"` // 統計分析結果
+
 	// 效能指標
-	ParseTime    int64     `json:"parseTime"`    // 解析耗時（毫秒）
-	StatTime     int64     `json:"statTime"`     // 統計計算耗時（毫秒）
-	MemoryUsed   int64     `json:"memoryUsed"`   // 記憶體使用量（位元組）
+	ParseTime  int64 `json:"parseTime"`  // 解析耗時（毫秒）
+	StatTime   int64 `json:"statTime"`   // 統計計算耗時（毫秒）
+	MemoryUsed int64 `json:"memoryUsed"` // 記憶體使用量（位元組）
 }
 
 // NewLogFile 建立新的 LogFile 實例

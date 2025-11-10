@@ -76,7 +76,7 @@ func TestTopNHeap_相同值(t *testing.T) {
 	results := heap.GetResults()
 
 	assert.Equal(t, 3, len(results), "應該有 3 個結果")
-	
+
 	// 所有結果的值都應該是 10
 	for _, result := range results {
 		assert.Equal(t, 10, result.Count, "所有 Top 3 的值都應該是 10")

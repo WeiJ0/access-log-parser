@@ -1,9 +1,9 @@
 package app
 
 import (
+	"access-log-analyzer/pkg/logger"
 	"context"
 	"fmt"
-	"access-log-analyzer/pkg/logger"
 )
 
 // App 結構表示主應用程式
@@ -37,10 +37,10 @@ func (a *App) Startup(ctx context.Context) {
 // 執行清理操作和資源釋放
 func (a *App) Shutdown(ctx context.Context) {
 	a.log.Info().Msg("應用程式正在關閉...")
-	
+
 	// 清理應用程式狀態
 	a.state.Cleanup()
-	
+
 	a.log.Info().Msg("應用程式 shutdown 完成")
 }
 

@@ -14,9 +14,9 @@ import (
 
 var (
 	// 命令列參數
-	lines      = flag.Int("lines", 10000, "要產生的日誌行數")
-	outputPath = flag.String("output", "testdata/test.log", "輸出檔案路徑")
-	errorRate  = flag.Float64("error-rate", 0.05, "錯誤行比率 (0.0-1.0)")
+	lines       = flag.Int("lines", 10000, "要產生的日誌行數")
+	outputPath  = flag.String("output", "testdata/test.log", "輸出檔案路徑")
+	errorRate   = flag.Float64("error-rate", 0.05, "錯誤行比率 (0.0-1.0)")
 	invalidRate = flag.Float64("invalid-rate", 0.01, "無效行比率 (0.0-1.0)")
 )
 
@@ -71,14 +71,14 @@ var referers = []string{
 
 func main() {
 	flag.Parse()
-	
+
 	// 確保輸出目錄存在
 	dir := filepath.Dir(*outputPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "無法建立目錄 %s: %v\n", dir, err)
 		os.Exit(1)
 	}
-	
+
 	// 開啟輸出檔案
 	file, err := os.Create(*outputPath)
 	if err != nil {
@@ -86,13 +86,13 @@ func main() {
 		os.Exit(1)
 	}
 	defer file.Close()
-	
+
 	// 初始化隨機數生成器
 	rand.Seed(time.Now().UnixNano())
-	
+
 	// 產生日誌行
 	startTime := time.Now().Add(-24 * time.Hour) // 從 24 小時前開始
-	
+
 	for i := 0; i < *lines; i++ {
 		// 決定此行是否為無效行
 		if rand.Float64() < *invalidRate {
@@ -101,19 +101,19 @@ func main() {
 			fmt.Fprintln(file, line)
 			continue
 		}
-		
+
 		// 產生正常的日誌行
 		timestamp := startTime.Add(time.Duration(i) * time.Second)
-		
+
 		// 決定是否為錯誤請求
 		isError := rand.Float64() < *errorRate
-		
+
 		line := generateLogLine(timestamp, isError)
 		fmt.Fprintln(file, line)
 	}
-	
+
 	fmt.Printf("成功產生 %d 行日誌到 %s\n", *lines, *outputPath)
-	
+
 	// 顯示檔案大小
 	if info, err := file.Stat(); err == nil {
 		sizeMB := float64(info.Size()) / (1024 * 1024)
@@ -129,11 +129,11 @@ func generateLogLine(timestamp time.Time, isError bool) string {
 		rand.Intn(256),
 		rand.Intn(256),
 		rand.Intn(256))
-	
+
 	// 隨機選擇路徑和方法
 	path := paths[rand.Intn(len(paths))]
 	method := methods[rand.Intn(len(methods))]
-	
+
 	// 根據是否錯誤選擇狀態碼
 	var statusCode int
 	if isError {
@@ -141,17 +141,17 @@ func generateLogLine(timestamp time.Time, isError bool) string {
 	} else {
 		statusCode = normalStatusCodes[rand.Intn(len(normalStatusCodes))]
 	}
-	
+
 	// 隨機回應大小（100 bytes 到 100 KB）
 	responseSize := rand.Intn(102400) + 100
-	
+
 	// 隨機 User-Agent 和 Referer
 	userAgent := userAgents[rand.Intn(len(userAgents))]
 	referer := referers[rand.Intn(len(referers))]
-	
+
 	// 格式化時間戳
 	timeStr := timestamp.Format("02/Jan/2006:15:04:05 -0700")
-	
+
 	// Combined Log Format:
 	// IP - - [timestamp] "method path protocol" status size "referer" "user-agent"
 	return fmt.Sprintf(`%s - - [%s] "%s %s HTTP/1.1" %d %d "%s" "%s"`,
@@ -169,6 +169,6 @@ func generateInvalidLine() string {
 		"Invalid timestamp format",
 		"Missing required fields",
 	}
-	
+
 	return invalidLines[rand.Intn(len(invalidLines))]
 }

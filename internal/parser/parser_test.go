@@ -3,7 +3,7 @@ package parser
 import (
 	"testing"
 	"time"
-	
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -12,14 +12,14 @@ import (
 func TestParseLine_CombinedFormat(t *testing.T) {
 	parser := NewParser(FormatCombined, 1)
 	pattern := GetPattern(FormatCombined)
-	
+
 	testCases := []struct {
-		name        string
-		line        string
-		expectError bool
-		expectIP    string
+		name         string
+		line         string
+		expectError  bool
+		expectIP     string
 		expectMethod string
-		expectURL   string
+		expectURL    string
 		expectStatus int
 	}{
 		{
@@ -50,21 +50,21 @@ func TestParseLine_CombinedFormat(t *testing.T) {
 			expectStatus: 404,
 		},
 		{
-			name:         "無效格式",
-			line:         "這不是一個有效的 log 行",
-			expectError:  true,
+			name:        "無效格式",
+			line:        "這不是一個有效的 log 行",
+			expectError: true,
 		},
 	}
-	
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			entry, err := parser.parseLine(1, tc.line, pattern)
-			
+
 			if tc.expectError {
 				assert.Error(t, err)
 				return
 			}
-			
+
 			require.NoError(t, err)
 			assert.Equal(t, tc.expectIP, entry.IP)
 			assert.Equal(t, tc.expectMethod, entry.Method)
@@ -78,10 +78,10 @@ func TestParseLine_CombinedFormat(t *testing.T) {
 func TestParseLine_CommonFormat(t *testing.T) {
 	parser := NewParser(FormatCommon, 1)
 	pattern := GetPattern(FormatCommon)
-	
+
 	line := `192.168.1.100 - - [06/Nov/2025:14:30:15 +0800] "GET /index.html HTTP/1.1" 200 1234`
 	entry, err := parser.parseLine(1, line, pattern)
-	
+
 	require.NoError(t, err)
 	assert.Equal(t, "192.168.1.100", entry.IP)
 	assert.Equal(t, "GET", entry.Method)
@@ -123,16 +123,16 @@ func TestParseApacheTime(t *testing.T) {
 			expectError: true,
 		},
 	}
-	
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			timestamp, err := parseApacheTime(tc.timeStr)
-			
+
 			if tc.expectError {
 				assert.Error(t, err)
 				return
 			}
-			
+
 			require.NoError(t, err)
 			assert.Equal(t, tc.expectYear, timestamp.Year())
 			assert.Equal(t, tc.expectMonth, timestamp.Month())
@@ -144,27 +144,27 @@ func TestParseApacheTime(t *testing.T) {
 // TestDetectFormat 測試格式自動偵測
 func TestDetectFormat(t *testing.T) {
 	testCases := []struct {
-		name          string
-		line          string
+		name         string
+		line         string
 		expectFormat LogFormat
 	}{
 		{
-			name:          "Combined 格式",
-			line:          `192.168.1.1 - - [06/Nov/2025:14:30:15 +0800] "GET /index.html HTTP/1.1" 200 1234 "https://example.com" "Mozilla/5.0"`,
+			name:         "Combined 格式",
+			line:         `192.168.1.1 - - [06/Nov/2025:14:30:15 +0800] "GET /index.html HTTP/1.1" 200 1234 "https://example.com" "Mozilla/5.0"`,
 			expectFormat: FormatCombined,
 		},
 		{
-			name:          "Common 格式",
-			line:          `192.168.1.1 - - [06/Nov/2025:14:30:15 +0800] "GET /index.html HTTP/1.1" 200 1234`,
+			name:         "Common 格式",
+			line:         `192.168.1.1 - - [06/Nov/2025:14:30:15 +0800] "GET /index.html HTTP/1.1" 200 1234`,
 			expectFormat: FormatCommon,
 		},
 		{
-			name:          "無法辨識（預設 Combined）",
-			line:          "invalid log line",
+			name:         "無法辨識（預設 Combined）",
+			line:         "invalid log line",
 			expectFormat: FormatCombined,
 		},
 	}
-	
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			format := DetectFormat(tc.line)
@@ -177,15 +177,15 @@ func TestDetectFormat(t *testing.T) {
 func TestLogEntry_Methods(t *testing.T) {
 	parser := NewParser(FormatCombined, 1)
 	pattern := GetPattern(FormatCombined)
-	
+
 	testCases := []struct {
-		name            string
-		line            string
-		expectError     bool
-		expectClient    bool
-		expectServer    bool
-		expectSuccess   bool
-		expectCategory  string
+		name           string
+		line           string
+		expectError    bool
+		expectClient   bool
+		expectServer   bool
+		expectSuccess  bool
+		expectCategory string
 	}{
 		{
 			name:           "2xx 成功",
@@ -224,12 +224,12 @@ func TestLogEntry_Methods(t *testing.T) {
 			expectCategory: "5xx",
 		},
 	}
-	
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			entry, err := parser.parseLine(1, tc.line, pattern)
 			require.NoError(t, err)
-			
+
 			assert.Equal(t, tc.expectError, entry.IsError())
 			assert.Equal(t, tc.expectClient, entry.IsClientError())
 			assert.Equal(t, tc.expectServer, entry.IsServerError())
@@ -242,7 +242,7 @@ func TestLogEntry_Methods(t *testing.T) {
 // TestValidateFirstLine 測試第一行格式驗證
 func TestValidateFirstLine(t *testing.T) {
 	parser := NewParser(FormatCombined, 1)
-	
+
 	testCases := []struct {
 		name        string
 		filepath    string
@@ -273,11 +273,11 @@ func TestValidateFirstLine(t *testing.T) {
 			errorMsg:    "無法開啟檔案",
 		},
 	}
-	
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			err := parser.ValidateFirstLine(tc.filepath)
-			
+
 			if tc.expectError {
 				require.Error(t, err)
 				if tc.errorMsg != "" {

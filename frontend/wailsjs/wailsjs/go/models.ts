@@ -1,5 +1,19 @@
 export namespace app {
 	
+	export class ClearRecentFilesResponse {
+	    success: boolean;
+	    errorMessage: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ClearRecentFilesResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.success = source["success"];
+	        this.errorMessage = source["errorMessage"];
+	    }
+	}
 	export class ExportToExcelRequest {
 	    filePath: string;
 	    savePath: string;
@@ -39,6 +53,58 @@ export namespace app {
 	        this.warnings = source["warnings"];
 	        this.errorMessage = source["errorMessage"];
 	    }
+	}
+	export class RecentFile {
+	    path: string;
+	    name: string;
+	    size: number;
+	    openedAt: string;
+	    totalLines: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RecentFile(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.name = source["name"];
+	        this.size = source["size"];
+	        this.openedAt = source["openedAt"];
+	        this.totalLines = source["totalLines"];
+	    }
+	}
+	export class GetRecentFilesResponse {
+	    success: boolean;
+	    files: RecentFile[];
+	
+	    static createFrom(source: any = {}) {
+	        return new GetRecentFilesResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.success = source["success"];
+	        this.files = this.convertValues(source["files"], RecentFile);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class ParseFileRequest {
 	    filePath: string;
@@ -88,6 +154,7 @@ export namespace app {
 		    return a;
 		}
 	}
+	
 	export class SelectFileResponse {
 	    success: boolean;
 	    filePath: string;

@@ -38,22 +38,22 @@ func (r *BenchmarkResult) String() string {
 func RunBenchmark(name string, fn func(), iterations int) *BenchmarkResult {
 	// 強制 GC
 	runtime.GC()
-	
+
 	// 記錄初始記憶體狀態
 	var memBefore runtime.MemStats
 	runtime.ReadMemStats(&memBefore)
-	
+
 	// 執行測試
 	start := time.Now()
 	for i := 0; i < iterations; i++ {
 		fn()
 	}
 	duration := time.Since(start)
-	
+
 	// 記錄最終記憶體狀態
 	var memAfter runtime.MemStats
 	runtime.ReadMemStats(&memAfter)
-	
+
 	// 計算結果
 	result := &BenchmarkResult{
 		Name:           name,
@@ -64,7 +64,7 @@ func RunBenchmark(name string, fn func(), iterations int) *BenchmarkResult {
 		MemAllocBytes:  memAfter.TotalAlloc - memBefore.TotalAlloc,
 		MemAllocsCount: memAfter.Mallocs - memBefore.Mallocs,
 	}
-	
+
 	return result
 }
 
@@ -76,21 +76,21 @@ func BenchmarkThroughput(name string, fn func() int64, duration time.Duration) *
 	start := time.Now()
 	var totalBytes int64
 	var iterations int
-	
+
 	for time.Since(start) < duration {
 		totalBytes += fn()
 		iterations++
 	}
-	
+
 	elapsed := time.Since(start)
-	
+
 	return &ThroughputResult{
-		Name:         name,
-		Duration:     elapsed,
-		TotalBytes:   totalBytes,
-		Iterations:   iterations,
-		BytesPerSec:  float64(totalBytes) / elapsed.Seconds(),
-		MBPerSec:     float64(totalBytes) / (1024 * 1024) / elapsed.Seconds(),
+		Name:        name,
+		Duration:    elapsed,
+		TotalBytes:  totalBytes,
+		Iterations:  iterations,
+		BytesPerSec: float64(totalBytes) / elapsed.Seconds(),
+		MBPerSec:    float64(totalBytes) / (1024 * 1024) / elapsed.Seconds(),
 	}
 }
 

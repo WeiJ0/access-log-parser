@@ -15,15 +15,15 @@ type Calculator struct {
 
 // Statistics 包含完整的統計資訊
 type Statistics struct {
-	TotalRequests          int                    `json:"totalRequests"`          // 總請求數
-	UniqueIPs              int                    `json:"uniqueIPs"`              // 唯一 IP 數量
-	UniquePaths            int                    `json:"uniquePaths"`            // 唯一路徑數量
-	TotalBytes             int64                  `json:"totalBytes"`             // 總傳輸量（位元組）
-	AverageResponseSize    int64                  `json:"averageResponseSize"`    // 平均回應大小
-	TopIPs                 []IPStatistics         `json:"topIPs"`                 // Top IP 統計
-	TopPaths               []PathStatistics       `json:"topPaths"`               // Top 路徑統計
-	StatusCodeDistribution StatusCodeStatistics  `json:"statusCodeDistribution"` // 狀態碼分布
-	BotStats               BotStats               `json:"botStats"`               // 機器人統計
+	TotalRequests          int                  `json:"totalRequests"`          // 總請求數
+	UniqueIPs              int                  `json:"uniqueIPs"`              // 唯一 IP 數量
+	UniquePaths            int                  `json:"uniquePaths"`            // 唯一路徑數量
+	TotalBytes             int64                `json:"totalBytes"`             // 總傳輸量（位元組）
+	AverageResponseSize    int64                `json:"averageResponseSize"`    // 平均回應大小
+	TopIPs                 []IPStatistics       `json:"topIPs"`                 // Top IP 統計
+	TopPaths               []PathStatistics     `json:"topPaths"`               // Top 路徑統計
+	StatusCodeDistribution StatusCodeStatistics `json:"statusCodeDistribution"` // 狀態碼分布
+	BotStats               BotStats             `json:"botStats"`               // 機器人統計
 }
 
 // IPStatistics IP 統計資訊
@@ -43,11 +43,11 @@ type PathStatistics struct {
 
 // StatusCodeStatistics 狀態碼統計資訊
 type StatusCodeStatistics struct {
-	Success      int            `json:"success"`      // 2xx 成功
-	Redirection  int            `json:"redirection"`  // 3xx 重定向
-	ClientError  int            `json:"clientError"`  // 4xx 客戶端錯誤
-	ServerError  int            `json:"serverError"`  // 5xx 伺服器錯誤
-	Details      map[int]int    `json:"details"`      // 詳細狀態碼分布
+	Success     int         `json:"success"`     // 2xx 成功
+	Redirection int         `json:"redirection"` // 3xx 重定向
+	ClientError int         `json:"clientError"` // 4xx 客戶端錯誤
+	ServerError int         `json:"serverError"` // 5xx 伺服器錯誤
+	Details     map[int]int `json:"details"`     // 詳細狀態碼分布
 }
 
 // NewCalculator 建立新的統計計算器

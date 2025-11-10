@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -24,7 +24,7 @@ func Init() {
 	// 設定人類可讀的格式（開發模式）
 	// 生產環境可切換為 JSON 格式
 	zerolog.TimeFieldFormat = time.RFC3339
-	
+
 	// 創建多輸出：控制台 + 檔案
 	writers := []io.Writer{
 		zerolog.ConsoleWriter{
@@ -32,7 +32,7 @@ func Init() {
 			TimeFormat: "2006-01-02 15:04:05",
 		},
 	}
-	
+
 	// 嘗試創建日誌檔案
 	logFile, err := os.OpenFile(
 		filepath.Join(".", "app.log"),
@@ -46,16 +46,16 @@ func Init() {
 			NoColor:    true,
 		})
 	}
-	
+
 	output := io.MultiWriter(writers...)
-	
+
 	// 建立日誌記錄器
 	logger := zerolog.New(output).
 		With().
 		Timestamp().
 		Caller().
 		Logger()
-	
+
 	// 設定全局日誌級別（可從環境變數讀取）
 	logLevel := os.Getenv("LOG_LEVEL")
 	switch logLevel {
@@ -70,10 +70,10 @@ func Init() {
 	default:
 		zerolog.SetGlobalLevel(zerolog.InfoLevel) // 預設為 info
 	}
-	
+
 	globalLogger = &Logger{&logger}
 	log.Logger = logger // 更新 zerolog 的全局 logger
-	
+
 	globalLogger.Info().Msg("日誌系統初始化完成")
 }
 

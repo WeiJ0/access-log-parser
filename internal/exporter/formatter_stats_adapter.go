@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
-	
+
 	"access-log-analyzer/internal/stats"
 )
 
@@ -14,9 +14,9 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 	if s == nil {
 		return [][]string{{"統計項目", "數值"}}
 	}
-	
+
 	result := make([][]string, 0)
-	
+
 	// 基本統計資料區塊
 	result = append(result, []string{"===== 基本統計 ====="})
 	result = append(result, []string{"統計項目", "數值"})
@@ -26,7 +26,7 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 	result = append(result, []string{"總傳輸量 (位元組)", strconv.FormatInt(s.TotalBytes, 10)})
 	result = append(result, []string{"總傳輸量 (MB)", fmt.Sprintf("%.2f", float64(s.TotalBytes)/(1024*1024))})
 	result = append(result, []string{"平均回應大小 (位元組)", strconv.FormatInt(s.AverageResponseSize, 10)})
-	
+
 	// Top IP統計
 	result = append(result, []string{""}) // 空行分隔
 	result = append(result, []string{"===== Top 10 IP 位址 ====="})
@@ -43,7 +43,7 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 			strconv.FormatInt(ip.TotalBytes, 10),
 		})
 	}
-	
+
 	// Top路徑統計
 	result = append(result, []string{""})
 	result = append(result, []string{"===== Top 10 請求路徑 ====="})
@@ -61,7 +61,7 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 			fmt.Sprintf("%.2f", path.ErrorRate),
 		})
 	}
-	
+
 	// 狀態碼分布
 	result = append(result, []string{""})
 	result = append(result, []string{"===== 狀態碼分布 ====="})
@@ -70,7 +70,7 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 	result = append(result, []string{"重定向 (3xx)", strconv.Itoa(s.StatusCodeDistribution.Redirection)})
 	result = append(result, []string{"客戶端錯誤 (4xx)", strconv.Itoa(s.StatusCodeDistribution.ClientError)})
 	result = append(result, []string{"伺服器錯誤 (5xx)", strconv.Itoa(s.StatusCodeDistribution.ServerError)})
-	
+
 	// 機器人統計
 	result = append(result, []string{""})
 	result = append(result, []string{"===== 機器人統計 ====="})
@@ -79,13 +79,13 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 	result = append(result, []string{"機器人請求數", strconv.Itoa(s.BotStats.BotRequests)})
 	result = append(result, []string{"人類請求數", strconv.Itoa(s.BotStats.HumanRequests)})
 	result = append(result, []string{"機器人百分比", fmt.Sprintf("%.2f%%", s.BotStats.BotPercentage)})
-	
+
 	// 機器人類型分布
 	if len(s.BotStats.BotTypes) > 0 {
 		result = append(result, []string{""})
 		result = append(result, []string{"===== 機器人類型分布 ====="})
 		result = append(result, []string{"類型", "次數"})
-		
+
 		// 排序機器人類型
 		var botTypes []string
 		for botType := range s.BotStats.BotTypes {
@@ -94,7 +94,7 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 		sort.Slice(botTypes, func(i, j int) bool {
 			return s.BotStats.BotTypes[botTypes[i]] > s.BotStats.BotTypes[botTypes[j]]
 		})
-		
+
 		for _, botType := range botTypes {
 			count := s.BotStats.BotTypes[botType]
 			result = append(result, []string{
@@ -103,13 +103,13 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 			})
 		}
 	}
-	
+
 	// Top Bots
 	if len(s.BotStats.TopBots) > 0 {
 		result = append(result, []string{""})
 		result = append(result, []string{"===== Top 機器人 ====="})
 		result = append(result, []string{"名稱", "請求次數", "百分比(%)"})
-		
+
 		topBotsCount := len(s.BotStats.TopBots)
 		if topBotsCount > 10 {
 			topBotsCount = 10
@@ -123,6 +123,6 @@ func (f *Formatter) FormatStatsStatistics(s *stats.Statistics) [][]string {
 			})
 		}
 	}
-	
+
 	return result
 }
